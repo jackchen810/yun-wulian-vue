@@ -43,6 +43,8 @@
                 loading:false,
                 fullscreenLoading: false,
 
+                updateTimer: '',
+
                 system_setup_list:[{"project_name":"津西钢铁脱销项目","device_local":"津西","device_name":"津西1#高级氧化设备","device_run_status":"运行","device_link_status":"正常"}],
                 listData:[],
 
@@ -88,6 +90,13 @@
                             self.pageTotal = res.data.total;
                         }
                     }
+
+
+                    self.updateTimer = setTimeout(function(){
+                        //self.getData(self.currentPage, self.page_size);
+                        //window.location.reload();
+                        history.go(0);//可以换成上一篇博客的任何一种方法。
+                    },60000);
                 });
             },
             handleCurrentChange:function(val){
