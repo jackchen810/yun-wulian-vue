@@ -74,6 +74,7 @@
                 var params = {
                     page_size: page_size,
                     current_page: current_page,
+                    filter: {device_name: 'jinxi_1'}
                 };
                 self.loading = true;
                 self.$axios.post('/api/gateway/data/list', params).then(function(res){
