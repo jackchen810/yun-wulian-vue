@@ -7,7 +7,7 @@
             </el-breadcrumb>
         </div>
         <h4>基本信息:</h4>
-        <el-table :data="system_setup_list" border style="width: 100%;margin:20px 0 20px;" ref="multileTable" v-loading="setup_loading">
+        <el-table :data="system_setup_list" border style="width: 100%;margin:20px 0 20px;" ref="multileTable" v-loading="loading">
             <el-table-column prop="project_name" label="项目名称"></el-table-column>
             <el-table-column prop="device_local" label="装备地点"></el-table-column>
             <el-table-column prop="device_name" label="设备名称"></el-table-column>
@@ -15,7 +15,7 @@
             <el-table-column prop="device_link_status" label="设备链路状态"></el-table-column>
         </el-table>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
-            <el-table-column prop="index" label="序号" width="80"></el-table-column>
+            <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="id" label="名称" width="180"></el-table-column>
             <el-table-column prop="desc" label="描述" width="240"></el-table-column>
             <el-table-column prop="quality" label="质量" width="100"></el-table-column>
