@@ -1,16 +1,16 @@
 {
-    "name": "nodequant",
+    "name": "yun-wulian-vue",
     "version": "0.12.0",
-    "description": "量化交易系统解决方案",
+    "description": "金大万翔物联网管理系统",
     "author": "chenzejun <63900720@qq.com>",
     "private": true,
     "scripts": {
         "dev": "node build/dev-server.js",
         "build": "node build/build.js",
         "build:dll": "webpack --config build/webpack.dll.conf.js",
-        "start": "pm2 start build/dev-server.js --name 'node-server'",
-        "stop": "pm2 stop build/dev-server.js --name 'node-server'",
-        "restart": "pm2 restart build/dev-server.js --name 'node-server'"
+        "start": "pm2 start build/dev-server.js --name 'yun-wulian-vue'",
+        "stop": "pm2 stop build/dev-server.js --name 'yun-wulian-vue'",
+        "restart": "pm2 restart build/dev-server.js --name 'yun-wulian-vue'"
     },
     "dependencies": {
         "axios": "^0.15.3",
@@ -21,7 +21,7 @@
         "vue-datasource": "1.0.9",
         "vue-quill-editor": "2.1.6",
         "vue-router": "^2.3.1",
-        "vue-schart": "^0.1.2",
+        "vue-schart": "^0.1.4",
         "vue-simplemde": "0.3.8"
     },
     "devDependencies": {

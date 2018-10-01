@@ -7,12 +7,12 @@
             </el-breadcrumb>
         </div>
         <h4>基本信息:</h4>
-        <el-table :data="system_setup_list" border style="width: 100%;margin:20px 0 20px;" ref="multileTable" v-loading="loading">
-            <el-table-column prop="project_name" label="项目名称"></el-table-column>
-            <el-table-column prop="device_local" label="装备地点"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称"></el-table-column>
-            <el-table-column prop="device_run_status" label="设备运行状态"></el-table-column>
-            <el-table-column prop="device_link_status" label="设备链路状态"></el-table-column>
+        <el-table :data="system_setup_list" style="width: 100%" ref="multileTable">
+            <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
+            <el-table-column prop="device_local" label="装备地点" width="100"></el-table-column>
+            <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
+            <el-table-column prop="device_run_status" label="设备运行状态" width="120"></el-table-column>
+            <el-table-column prop="device_link_status" label="设备链路状态" width="120"></el-table-column>
         </el-table>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
@@ -20,6 +20,11 @@
             <el-table-column prop="desc" label="描述" width="240"></el-table-column>
             <el-table-column prop="quality" label="质量" width="100"></el-table-column>
             <el-table-column prop="value" label="值"></el-table-column>
+            <el-table-column label="操作" width="250">
+            <template slot-scope="scope">
+                <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.id, scope.row.desc)">查看历史曲线</el-button>
+            </template>
+        </el-table-column>
         </el-table>
         <div class="pagination">
             <el-pagination
@@ -44,6 +49,8 @@
                 fullscreenLoading: false,
 
                 updateTimer: '',
+                device_name: 'jinxi_1',
+                channel_name: 'C1_D1',
 
                 system_setup_list:[{"project_name":"津西钢铁脱销项目","device_local":"津西","device_name":"津西1#高级氧化设备","device_run_status":"运行","device_link_status":"正常"}],
                 listData:[],
@@ -56,27 +63,17 @@
         },
         created: function(){
             this.getData(1, this.page_size);
-            //this.getDataLength();
         },
         methods: {
-            /*
-            getDataLength: function(){//获取task列表
-                var self = this;
-                self.loading = true;
-                self.$axios.post('/api/log/list/length').then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.pageTotal = res.data.extra;
-                    }
-                });
-            },
-            */
             getData: function(current_page, page_size){//获取rom列表
                 var self = this;
                 var params = {
+                    channel_name: self.channel_name,
                     page_size: page_size,
                     current_page: current_page,
-                    filter: {device_name: 'jinxi_1'}
+                    filter: {
+                        device_name: self.device_name,
+                    }
                 };
                 self.loading = true;
                 self.$axios.post('/api/gateway/data/list', params).then(function(res){
@@ -105,6 +102,17 @@
             },
             filterTag:function(value, row) {
                 return row.comment === value;
+            },
+            page_forward_chart: function(tag_name, tag_desc){
+                var params = {
+                    device_name: this.device_name,
+                    channel_name: this.channel_name,
+                    tag_name: tag_name,
+                    tag_desc: tag_desc,
+                };
+
+                //this.$message({message: params,type:'warning'});
+                this.$router.push({name: '/charts', params :params});
             },
         },
         computed:{

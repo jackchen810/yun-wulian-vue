@@ -15,22 +15,31 @@ export default new Router({
             children:[
                 {
                     path: '/',
+                    //name: '/',
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
                 },
 
                 {
                     path: '/basetable',
+                    name: '/basetable',
                     component: resolve => require(['../components/page/BaseTable.vue'], resolve)
                 },
             ]
         },
         {
             path: '/login',
+            name: '/login',
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },
         {
             path: '/register',
-                component: resolve => require(['../components/page/Register.vue'], resolve)
+            name: '/register',
+            component: resolve => require(['../components/page/Register.vue'], resolve)
+        },
+        {
+            path: '/charts',
+            name: '/charts',
+            component: resolve => require(['../components/page/BaseCharts.vue'], resolve)
         },
     ]
 })

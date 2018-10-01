@@ -25,7 +25,7 @@ module.exports = {
     },
     dev: {   //开发环境会有跨域问题
         env: require('./dev.env'),
-        port: 8100,    //本地调试端口
+        port: 8110,    //本地调试端口
         autoOpenBrowser: true,
         assetsSubDirectory: 'static',
         assetsPublicPath: '/',
