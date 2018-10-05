@@ -17,7 +17,7 @@
 </template>
 
 <script>
-    import echarts from '../common/echarts.simple.min';
+    import echarts from '../../echarts.min.js';
     export default {
         data: function(){
             return {
@@ -91,6 +91,9 @@
 
                         let mychart = echarts.init(document.getElementById('mychart'));
                         let option = {
+                            tooltip: {
+                                trigger: 'axis'
+                            },
                             xAxis: {
                                 type: 'category',
                                 data: self.formC.xAxisHistoryData
@@ -99,6 +102,7 @@
                                 type: 'value'
                             },
                             series: [{
+                                name:'数值',
                                 data: self.formC.seriesHistoryData,
                                 type: 'line'
                             }]
