@@ -52,7 +52,12 @@
                 device_name: 'jinxi_1',
                 channel_name: 'C1_D1',
 
-                system_setup_list:[{"project_name":"津西钢铁脱销项目","device_local":"津西","device_name":"津西1#高级氧化设备","device_run_status":"运行","device_link_status":"正常"}],
+                system_setup_list:[{
+                    "project_name":"津西钢铁脱销项目",
+                    "device_local":"津西",
+                    "device_name":"津西1号高级氧化设备",
+                    "device_run_status":"运行",
+                    "device_link_status":"正常"}],
                 listData:[],
 
                 pageTotal:1,
@@ -62,6 +67,12 @@
             }
         },
         created: function(){
+            //console.log('2222', this.$route.query);
+            if (typeof(this.$route.query.device_name) != "undefined") {
+                this.device_name = this.$route.query.device_name;
+                this.channel_name = this.$route.query.channel_name;
+                this.system_setup_list[0].device_name = this.$route.query.display_name;
+            }
             this.getData(1, this.page_size);
         },
         methods: {

@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" theme="dark" unique-opened router>
+        <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" @select="handleSelect" theme="dark" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index">
@@ -25,40 +25,32 @@
         data: function() {
             return {
                 user_type:1,  //0:管理员, 1:用户
-                items:[],
-                items_admin:[
+                current_index:'',
+                items:[
                     {
                         icon: 'el-icon-menu',
                         index: '1',
                         title: '设备管理',
                         subs: [
                             {
-                                index: '/basetable',
-                                title: '津西高级氧化设备'
+                                index: '/basetable?device_name=jinxi_1&channel_name=C1_D1&display_name=津西1号高级氧化设备',
+                                title: '津西高级氧化1#设备'
+                            },
+                            {
+                                index: '/basetable?device_name=jinxi_2&channel_name=C2_D1&display_name=津西2号高级氧化设备',
+                                title: '津西高级氧化2#设备'
+                            },
+                            {
+                                index: '/basetable?device_name=jinxi_3&channel_name=C3_D1&display_name=津西3号高级氧化设备',
+                                title: '津西高级氧化3#设备'
                             },
                         ]
                     },
                 ],
-                items_user:[
-                ],
-                items_common: [
-                ]
             }
         },
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
-
-            if (this.user_type == 0){
-                this.items = this.items_admin.concat(this.items_common);
-            }
-            else{
-                this.items = this.items_user.concat(this.items_common);
-            }
-
-            //安照index 排序
-            this.items  = this.items.sort( function sortId(a,b){
-                return a.index-b.index;
-            });
 
         },
         computed:{
@@ -70,6 +62,14 @@
         methods:{
             getUser: function(){
                 var self = this;
+            },
+            handleSelect: function(key, keyPath) {
+                //console.log('1113', key, this.current_index);
+                if (this.current_index != key) {
+                    this.current_index = key;
+                    this.$router.replace(key);
+                    this.$router.go(0);
+                }
             },
         },
         mounted: function(){
