@@ -33,15 +33,15 @@
                         title: '设备管理',
                         subs: [
                             {
-                                index: '/basetable?device_name=jinxi_1&channel_name=C1_D1&display_name=津西1号高级氧化设备',
+                                index: '/basetable?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
                                 title: '津西高级氧化1#设备'
                             },
                             {
-                                index: '/basetable?device_name=jinxi_2&channel_name=C2_D1&display_name=津西2号高级氧化设备',
+                                index: '/basetable?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
                                 title: '津西高级氧化2#设备'
                             },
                             {
-                                index: '/basetable?device_name=jinxi_3&channel_name=C3_D1&display_name=津西3号高级氧化设备',
+                                index: '/basetable?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
                                 title: '津西高级氧化3#设备'
                             },
                         ]
