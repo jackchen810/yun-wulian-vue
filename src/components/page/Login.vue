@@ -75,7 +75,7 @@
                         localStorage.setItem('user_type', res.data.extra);
                         localStorage.setItem('user_account', self.ruleForm.username);
                         //localStorage.setItem('ms_username', self.ruleForm.username);
-                        self.$router.push('/basetable');
+                        self.$router.push('/basetable1');
                     }else{
                         self.$message(res.data.ret_msg);
                     }

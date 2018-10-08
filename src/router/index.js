@@ -18,11 +18,20 @@ export default new Router({
                     //name: '/',
                     component: resolve => require(['../components/page/Readme.vue'], resolve)
                 },
-
                 {
-                    path: '/basetable',
-                    name: '/basetable',
-                    component: resolve => require(['../components/page/BaseTable.vue'], resolve)
+                    path: '/basetable1',
+                    name: '/basetable1',
+                    component: resolve => require(['../components/page/BaseTable1.vue'], resolve)
+                },
+                {
+                    path: '/basetable2',
+                    name: '/basetable2',
+                    component: resolve => require(['../components/page/BaseTable2.vue'], resolve)
+                },
+                {
+                    path: '/basetable3',
+                    name: '/basetable3',
+                    component: resolve => require(['../components/page/BaseTable3.vue'], resolve)
                 },
             ]
         },

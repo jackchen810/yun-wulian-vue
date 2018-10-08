@@ -30,18 +30,18 @@
                     {
                         icon: 'el-icon-menu',
                         index: '1',
-                        title: '设备管理',
+                        title: '津西项目',
                         subs: [
                             {
-                                index: '/basetable?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
+                                index: '/basetable1?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
                                 title: '津西高级氧化1#设备'
                             },
                             {
-                                index: '/basetable?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
+                                index: '/basetable2?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
                                 title: '津西高级氧化2#设备'
                             },
                             {
-                                index: '/basetable?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
+                                index: '/basetable3?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
                                 title: '津西高级氧化3#设备'
                             },
                         ]
@@ -65,11 +65,13 @@
             },
             handleSelect: function(key, keyPath) {
                 //console.log('1113', key, this.current_index);
+                /*
                 if (this.current_index != key) {
                     this.current_index = key;
                     this.$router.replace(key);
                     this.$router.go(0);
                 }
+                */
             },
         },
         mounted: function(){
