@@ -12,7 +12,7 @@
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column prop="update_time" label="创建时间" width="170"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="300"></el-table-column>
-            <el-table-column prop="prject_name" label="所属项目" width="160"></el-table-column>
+            <el-table-column prop="project_name" label="所属项目" width="160"></el-table-column>
             <el-table-column prop="device_status" label="设备状态" width="160"></el-table-column>
             <el-table-column prop="device_image" label="设备图片" width="160"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
@@ -56,8 +56,8 @@
                 <el-form-item label="设备名称" prop=device_name :label-width="formLabelWidth">
                     <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="设备所属项目" prop="prject_name" :label-width="formLabelWidth">
-                    <el-select v-model="form.prject_name" placeholder="请选择设备所属项目">
+                <el-form-item label="设备所属项目" prop="project_name" :label-width="formLabelWidth">
+                    <el-select v-model="form.project_name" placeholder="请选择设备所属项目">
                         <el-option
                                 v-for="item in prjOwnerList"
                                 :key="item"
@@ -94,7 +94,7 @@
                 form: {
                     file_name:'',
                     device_name:'',
-                    prject_name:'',
+                    project_name:'',
                     device_image:'',
                     comment:''
                 },
@@ -102,7 +102,7 @@
                     device_name:[
                         {required: true, message: '请输入设备名称', trigger: 'blur'}
                     ],
-                    prject_name:[
+                    project_name:[
                         {required: true, message: '请输入所属项目', trigger: 'blur'}
                     ],
                 },
@@ -252,7 +252,7 @@
                 }
                 self.fileList = [];
                 self.form.device_name = '';
-                self.form.prject_name = '';
+                self.form.project_name = '';
                 self.form.comment = '';
                 //this.fullscreenLoading  = false;
 
