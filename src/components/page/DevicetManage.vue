@@ -3,17 +3,16 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-star-on"></i> 项目信息管理</el-breadcrumb-item>
-                <!--<el-breadcrumb-item>ROM列表</el-breadcrumb-item>-->
                 <el-breadcrumb-item>设备管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <div class="handle-box rad-group" v-if="isShow">
-            <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加项目</el-button>
+            <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column prop="update_time" label="创建时间" width="170"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="300"></el-table-column>
-            <el-table-column prop="device_ownner" label="项目管理员" width="160"></el-table-column>
+            <el-table-column prop="device_ownner" label="所属项目" width="160"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
@@ -32,7 +31,7 @@
             </el-pagination>
         </div>
 
-        <el-dialog title="添加项目" :visible.sync="dialogFormVisible" class="digcont">
+        <el-dialog title="添加设备" :visible.sync="dialogFormVisible" class="digcont">
             <el-form :model="form" :rules="rules" ref="form">
                 <el-form-item label="上传" :label-width="formLabelWidth">
                     <el-upload
@@ -49,14 +48,14 @@
                             :on-error="handleError"
                             :file-list="fileList"
                             :auto-upload="false">
-                        <el-button slot="trigger" size="small" type="primary">选取项目图片</el-button>
+                        <el-button slot="trigger" size="small" type="primary">选取设备图片</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="设备名称" prop=device_name :label-width="formLabelWidth">
                     <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="设备所属项目" prop="project_owner" :label-width="formLabelWidth">
-                    <el-select v-model="form.project_owner" placeholder="请选择设备所属项目">
+                <el-form-item label="设备所属项目" prop="device_owner" :label-width="formLabelWidth">
+                    <el-select v-model="form.device_owner" placeholder="请选择设备所属项目">
                         <el-option
                                 v-for="item in prjOwnerList"
                                 :key="item"
@@ -84,6 +83,8 @@
     export default {
         data: function(){
             return {
+                user_type:1,  //0:管理员, 1:用户
+                user_account:'',
                 uploadUrl:"api/project/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
@@ -91,7 +92,7 @@
                 form: {
                     file_name:'',
                     device_name:'',
-                    project_owner:'aa',
+                    device_owner:'',
                     project_local: '',
                     project_image:'',
                     comment:''
@@ -99,6 +100,9 @@
                 rules: {
                     device_name:[
                         {required: true, message: '请输入设备名称', trigger: 'blur'}
+                    ],
+                    device_owner:[
+                        {required: true, message: '请输入所属项目', trigger: 'blur'}
                     ],
                 },
                 formLabelWidth: '120px',
@@ -113,26 +117,35 @@
             }
         },
         created: function(){
-            //this.getData({});
-            //this.getTypes();
+            this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            this.user_account = localStorage.getItem('user_account');  //管理员或用户
+            this.getData({user_account: this.user_account});
+            this.getProjectList({user_account: this.user_account});
         },
         methods: {
-
             getData: function(params){//获取项目列表
                 var self = this;
                 self.loading = true;
                 self.$axios.post('/api/device/list',params).then(function(res){
-//                    console.log(res);
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        if(JSON.stringify(params) == '{}'){
-                            self.pageTotal = res.data.extra.length;
-                            self.listData = res.data.extra.slice(0,10);
-                        }else{
-                            self.listData = res.data.extra;
-                        }
-
+                        self.prjOwnerList = res.data.extra.slice(0, this.page_size);
+                        self.pageTotal = res.data.total;
                     }else{
+                        self.listData = [];
+                        self.$message.error(res.data.ret_msg)
+                    }
+                })
+            },
+            getProjectList: function(params){//获取项目列表
+                var self = this;
+                self.loading = true;
+                self.$axios.post('/api/project/array',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.prjOwnerList = res.data.extra;
+                    }else{
+                        self.prjOwnerList = [];
                         self.$message.error(res.data.ret_msg)
                     }
                 })
@@ -155,18 +168,12 @@
                 self.loading = true;
                 self.$axios.post('api/rom/del',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
                         // self.getData({});
                         self.listData.splice(i,1);
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -184,17 +191,11 @@
                 self.loading = true;
                 self.$axios.post('api/project/release',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData();
+                        self.getData({user_account: self.user_account});
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -202,24 +203,18 @@
                     self.loading = false;
                 })
             },
-            protectProject: function(id,fileName){//下架操作
+            hideProject: function(id,fileName){//下架操作
                 var self = this;
                 var params = {
                     _id: id,
                     device_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/project/revoke',params).then(function(res){
+                self.$axios.post('api/project/hide',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData();
+                        self.getData({user_account: self.user_account});
                     }else{
                         self.$message.error(res.data.extra)
                     }
@@ -232,7 +227,6 @@
             submitUpload: function(formName){
                 console.log("submitUpload", formName);
                 var self = this;
-
                 self.$refs[formName].validate(function(valid){
                     if(valid){
                         self.$refs.upload.submit();
@@ -257,7 +251,7 @@
                 }
                 self.fileList = [];
                 self.form.device_name = '';
-                self.form.project_owner = '';
+                self.form.device_owner = '';
                 self.form.project_local = '';
                 self.form.comment = '';
                 //this.fullscreenLoading  = false;

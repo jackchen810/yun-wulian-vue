@@ -3,7 +3,6 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item><i class="el-icon-star-on"></i> 项目信息管理</el-breadcrumb-item>
-                <!--<el-breadcrumb-item>ROM列表</el-breadcrumb-item>-->
                 <el-breadcrumb-item>项目管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -15,12 +14,14 @@
             <el-table-column prop="project_name" label="项目名称" width="300"></el-table-column>
             <el-table-column prop="project_local" label="项目地点" width="170"></el-table-column>
             <el-table-column prop="project_owner" label="项目管理员" width="160"></el-table-column>
+            <el-table-column prop="project_status" label="项目状态" width="160"></el-table-column>
+            <el-table-column prop="project_image" label="项目图片" width="160"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
                     <el-button class="btn1" type="text" size="small" @click="delProject(scope.row._id,scope.row.project_name,scope.$index)">删除</el-button>
-                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.project_status =='normal'" @click="protectProject(scope.row._id,scope.row.project_name)">保护</el-button>
-                    <el-button class="btn1" type="success" size="small" v-else @click="releaseProject(scope.row._id,scope.row.project_name)">开放</el-button>
+                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.project_status =='normal'" @click="hideProject(scope.row._id,scope.row.project_name)">隐藏</el-button>
+                    <el-button class="btn1" type="success" size="small" v-else @click="resumeProject(scope.row._id,scope.row.project_name)">可见</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -88,6 +89,8 @@
     export default {
         data: function(){
             return {
+                user_type:1,  //0:管理员, 1:用户
+                user_account:'',
                 uploadUrl:"api/project/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
@@ -95,7 +98,7 @@
                 form: {
                     file_name:'',
                     project_name:'',
-                    project_owner:'aa',
+                    project_owner:'',
                     project_local: '',
                     project_image:'',
                     comment:''
@@ -103,6 +106,9 @@
                 rules: {
                     project_name:[
                         {required: true, message: '请输入项目名称', trigger: 'blur'}
+                    ],
+                    project_owner:[
+                        {required: true, message: '请输入项目管理员', trigger: 'blur'}
                     ],
                 },
                 formLabelWidth: '120px',
@@ -118,8 +124,10 @@
             }
         },
         created: function(){
-            //this.getData({});
-            //this.getTypes();
+            this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            this.user_account = localStorage.getItem('user_account');  //管理员或用户
+            this.getData({user_account: this.user_account});
+            this.getAccount({});
         },
         methods: {
 
@@ -127,17 +135,25 @@
                 var self = this;
                 self.loading = true;
                 self.$axios.post('/api/project/list',params).then(function(res){
-//                    console.log(res);
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        if(JSON.stringify(params) == '{}'){
-                            self.pageTotal = res.data.extra.length;
-                            self.listData = res.data.extra.slice(0,10);
-                        }else{
-                            self.listData = res.data.extra;
-                        }
-
+                        self.listData = res.data.extra.slice(0,10);
+                        self.pageTotal = res.data.total;
                     }else{
+                        self.listData = [];
+                        self.$message.error(res.data.ret_msg)
+                    }
+                })
+            },
+            getAccount: function(params){//获取项目列表
+                var self = this;
+                self.loading = true;
+                self.$axios.post('/api/admin/array',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.prjOwnerList = res.data.extra;
+                    }else{
+                        self.prjOwnerList = [];
                         self.$message.error(res.data.ret_msg)
                     }
                 })
@@ -158,20 +174,14 @@
                     project_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/rom/del',params).then(function(res){
+                self.$axios.post('api/project/del',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
                         // self.getData({});
                         self.listData.splice(i,1);
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -180,26 +190,20 @@
                     console.log(err);
                 })
             },
-            releaseProject: function(id,fileName){//上架操作
+            resumeProject: function(id,fileName){//上架操作
                 var self = this;
                 var params = {
                     _id: id,
                     project_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/project/release',params).then(function(res){
+                self.$axios.post('api/project/resume',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData();
+                        self.getData({user_account: self.user_account});
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -207,24 +211,18 @@
                     self.loading = false;
                 })
             },
-            protectProject: function(id,fileName){//下架操作
+            hideProject: function(id,fileName){//下架操作
                 var self = this;
                 var params = {
                     _id: id,
                     project_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/project/revoke',params).then(function(res){
+                self.$axios.post('api/project/hide',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData();
+                        self.getData({user_account: self.user_account});
                     }else{
                         self.$message.error(res.data.extra)
                     }
@@ -237,7 +235,6 @@
             submitUpload: function(formName){
                 console.log("submitUpload", formName);
                 var self = this;
-
                 self.$refs[formName].validate(function(valid){
                     if(valid){
                         self.$refs.upload.submit();
@@ -268,9 +265,8 @@
                 //this.fullscreenLoading  = false;
 
                 this.dialogFormVisible = false;
-                //this.getData({});
-
                 this.$refs.upload.clearFiles();
+                this.getData({user_account: this.user_account});
             },
             handleError: function(err,file,fileList){
                 console.log("handleError", file.name);

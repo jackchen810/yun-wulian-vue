@@ -57,6 +57,11 @@
             }else{
                 this.items = [
                     {
+                        icon: 'el-icon-star-on',
+                        index: 'accountmanage',
+                        title: '渠道管理',
+                    },
+                    {
                         icon: 'el-icon-setting',
                         index: '1',
                         title: '项目管理',
