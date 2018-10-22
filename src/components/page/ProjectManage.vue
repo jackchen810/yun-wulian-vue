@@ -13,7 +13,7 @@
             <el-table-column prop="update_time" label="创建时间" width="170"></el-table-column>
             <el-table-column prop="project_name" label="项目名称" width="300"></el-table-column>
             <el-table-column prop="project_local" label="项目地点" width="170"></el-table-column>
-            <el-table-column prop="project_owner" label="项目管理员" width="160"></el-table-column>
+            <el-table-column prop="user_account" label="项目管理员" width="160"></el-table-column>
             <el-table-column prop="project_status" label="项目状态" width="160"></el-table-column>
             <el-table-column prop="project_image" label="项目图片" width="160"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
@@ -60,8 +60,8 @@
                 <el-form-item label="项目地点" prop="project_local" :label-width="formLabelWidth">
                     <el-input v-model="form.project_local" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="项目管理员" prop="project_owner" :label-width="formLabelWidth">
-                    <el-select v-model="form.project_owner" placeholder="请选择项目管理员">
+                <el-form-item label="项目管理员" prop="user_account" :label-width="formLabelWidth">
+                    <el-select v-model="form.user_account" placeholder="请选择项目管理员">
                         <el-option
                             v-for="item in prjOwnerList"
                             :key="item"
@@ -98,7 +98,7 @@
                 form: {
                     file_name:'',
                     project_name:'',
-                    project_owner:'',
+                    user_account:'',
                     project_local: '',
                     project_image:'',
                     comment:''
@@ -107,7 +107,7 @@
                     project_name:[
                         {required: true, message: '请输入项目名称', trigger: 'blur'}
                     ],
-                    project_owner:[
+                    user_account:[
                         {required: true, message: '请输入项目管理员', trigger: 'blur'}
                     ],
                 },
@@ -126,18 +126,18 @@
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
-            this.getData({user_account: this.user_account});
+            this.getProjectList({user_account: this.user_account});
             this.getAccount({});
         },
         methods: {
 
-            getData: function(params){//获取项目列表
+            getProjectList: function(params){//获取项目列表
                 var self = this;
                 self.loading = true;
                 self.$axios.post('/api/project/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0,10);
+                        self.listData = res.data.extra.slice(0, self.page_size);
                         self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
@@ -160,7 +160,7 @@
             },
             handleCurrentChange:function(val){
                 this.currentPage = val;
-                this.getData({page_size:10,current_page:this.currentPage});
+                this.getProjectList({page_size:10,current_page:this.currentPage});
             },
             clickDialogBtn: function(){
                 var self = this;
@@ -178,7 +178,7 @@
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
-                        // self.getData({});
+                        // self.getProjectList({});
                         self.listData.splice(i,1);
                     }else{
                         self.$message.error(res.data.ret_msg)
@@ -201,7 +201,7 @@
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData({user_account: self.user_account});
+                        self.getProjectList({user_account: self.user_account});
                     }else{
                         self.$message.error(res.data.ret_msg)
                     }
@@ -222,7 +222,7 @@
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getData({user_account: self.user_account});
+                        self.getProjectList({user_account: self.user_account});
                     }else{
                         self.$message.error(res.data.extra)
                     }
@@ -259,14 +259,14 @@
                 }
                 self.fileList = [];
                 self.form.project_name = '';
-                self.form.project_owner = '';
+                self.form.user_account = '';
                 self.form.project_local = '';
                 self.form.comment = '';
                 //this.fullscreenLoading  = false;
 
-                this.dialogFormVisible = false;
-                this.$refs.upload.clearFiles();
-                this.getData({user_account: this.user_account});
+                self.dialogFormVisible = false;
+                self.$refs.upload.clearFiles();
+                self.getProjectList({user_account: self.user_account});
             },
             handleError: function(err,file,fileList){
                 console.log("handleError", file.name);
