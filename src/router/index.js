@@ -33,6 +33,14 @@ export default new Router({
                     name: '/basetable3',
                     component: resolve => require(['../components/page/BaseTable3.vue'], resolve)
                 },
+                {
+                    path: '/projectmanage',
+                    component: resolve => require(['../components/page/ProjectManage.vue'], resolve)     // vue-datasource组件
+                },
+                {
+                    path: '/devicemanage',
+                    component: resolve => require(['../components/page/DevicetManage.vue'], resolve)     // vue-datasource组件
+                },
             ]
         },
         {

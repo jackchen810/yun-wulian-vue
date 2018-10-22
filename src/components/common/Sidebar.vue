@@ -26,7 +26,14 @@
             return {
                 user_type:1,  //0:管理员, 1:用户
                 current_index:'',
-                items:[
+                items:[],
+            }
+        },
+        created: function(){
+            this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            console.log("user_type:", this.user_type);
+            if(this.user_type == '1'){//普通管理员
+                this.items = [
                     {
                         icon: 'el-icon-menu',
                         index: '1',
@@ -46,12 +53,45 @@
                             },
                         ]
                     },
-                ],
+                ]
+            }else{
+                this.items = [
+                    {
+                        icon: 'el-icon-setting',
+                        index: '1',
+                        title: '项目管理',
+                        subs: [
+                            {
+                                index: 'projectmanage',
+                                title: '项目管理'
+                            },
+                            {
+                                index: 'devicemanage',
+                                title: '设备管理',
+                            },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-menu',
+                        index: '2',
+                        title: '津西项目',
+                        subs: [
+                            {
+                                index: '/basetable1?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
+                                title: '津西高级氧化1#设备'
+                            },
+                            {
+                                index: '/basetable2?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
+                                title: '津西高级氧化2#设备'
+                            },
+                            {
+                                index: '/basetable3?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
+                                title: '津西高级氧化3#设备'
+                            },
+                        ]
+                    },
+                ]
             }
-        },
-        created: function(){
-            this.user_type = localStorage.getItem('user_type');  //管理员或用户
-
         },
         computed:{
             onRoutes(){
