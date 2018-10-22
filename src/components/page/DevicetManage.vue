@@ -19,8 +19,8 @@
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
                     <el-button class="btn1" type="text" size="small" @click="delProject(scope.row._id,scope.row.device_name,scope.$index)">删除</el-button>
-                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.project_status =='normal'" @click="protectProject(scope.row._id,scope.row.device_name)">冻结</el-button>
-                    <el-button class="btn1" type="success" size="small" v-else @click="releaseProject(scope.row._id,scope.row.device_name)">解冻</el-button>
+                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.device_status =='normal'" @click="freezeDevice(scope.row._id,scope.row.device_name)">冻结</el-button>
+                    <el-button class="btn1" type="success" size="small" v-else @click="releaseDevice(scope.row._id,scope.row.device_name)">解冻</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -183,7 +183,7 @@
                     console.log(err);
                 })
             },
-            releaseProject: function(id,fileName){//上架操作
+            releaseDevice: function(id,fileName){//上架操作
                 var self = this;
                 var params = {
                     _id: id,
@@ -204,7 +204,7 @@
                     self.loading = false;
                 })
             },
-            hideProject: function(id,fileName){//下架操作
+            freezeDevice: function(id,fileName){//下架操作
                 var self = this;
                 var params = {
                     _id: id,
