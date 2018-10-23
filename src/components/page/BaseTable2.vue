@@ -90,7 +90,7 @@
                 self.$axios.post('/api/gateway/data/list', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0, page_size);
+                        self.listData = res.data.extra;
                         //self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
