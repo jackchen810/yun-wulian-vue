@@ -20,8 +20,8 @@
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
                     <el-button class="btn1" type="text" size="small" @click="delProject(scope.row._id,scope.row.project_name,scope.$index)">删除</el-button>
-                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.project_status =='normal'" @click="hideProject(scope.row._id,scope.row.project_name)">隐藏</el-button>
-                    <el-button class="btn1" type="success" size="small" v-else @click="resumeProject(scope.row._id,scope.row.project_name)">可见</el-button>
+                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.project_status =='normal'" @click="projectStatusUpdate(scope.row._id,'hide')">隐藏</el-button>
+                    <el-button class="btn1" type="success" size="small" v-else @click="projectStatusUpdate(scope.row._id,'normal')">可见</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -126,18 +126,22 @@
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
-            this.getProjectList({user_account: this.user_account});
+            this.getProjectList(this.currentPage, this.page_size);
             this.getAccount({});
         },
         methods: {
 
-            getProjectList: function(params){//获取项目列表
+            getProjectList: function(current_page, page_size){//获取项目列表
                 var self = this;
+                var params = {
+                    page_size: page_size,
+                    current_page: current_page,
+                };
                 self.loading = true;
-                self.$axios.post('/api/project/list',params).then(function(res){
+                self.$axios.post('/api/project/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0, self.page_size);
+                        self.listData = res.data.extra.slice(0, page_size);
                         self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
@@ -160,7 +164,7 @@
             },
             handleCurrentChange:function(val){
                 this.currentPage = val;
-                this.getProjectList({page_size:10,current_page:this.currentPage});
+                this.getProjectList(this.currentPage, this.page_size);
             },
             clickDialogBtn: function(){
                 var self = this;
@@ -178,7 +182,6 @@
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
-                        // self.getProjectList({});
                         self.listData.splice(i,1);
                     }else{
                         self.$message.error(res.data.ret_msg)
@@ -190,39 +193,17 @@
                     console.log(err);
                 })
             },
-            resumeProject: function(id,fileName){//上架操作
+            projectStatusUpdate: function(id, status){//下架操作
                 var self = this;
                 var params = {
                     _id: id,
-                    project_name:fileName
+                    project_status:status
                 };
                 self.loading = true;
-                self.$axios.post('api/project/resume',params).then(function(res){
+                self.$axios.post('api/project/status/update',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
-                        self.getProjectList({user_account: self.user_account});
-                    }else{
-                        self.$message.error(res.data.ret_msg)
-                    }
-
-                },function(err){
-                    self.$message.error('操作失败');
-                    self.loading = false;
-                })
-            },
-            hideProject: function(id,fileName){//下架操作
-                var self = this;
-                var params = {
-                    _id: id,
-                    project_name:fileName
-                };
-                self.loading = true;
-                self.$axios.post('api/project/hide',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.$message({message:'操作成功',type:'success'});
-                        self.getProjectList({user_account: self.user_account});
                     }else{
                         self.$message.error(res.data.extra)
                     }
@@ -230,7 +211,9 @@
                 },function(err){
                     self.$message.error('操作失败');
                     self.loading = false;
-                })
+                });
+
+                self.getProjectList(self.currentPage, self.page_size);
             },
             submitUpload: function(formName){
                 console.log("submitUpload", formName);
@@ -266,7 +249,7 @@
 
                 self.dialogFormVisible = false;
                 self.$refs.upload.clearFiles();
-                self.getProjectList({user_account: self.user_account});
+                this.getProjectList(self.currentPage, self.page_size);
             },
             handleError: function(err,file,fileList){
                 console.log("handleError", file.name);

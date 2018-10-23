@@ -25,12 +25,14 @@
         data: function() {
             return {
                 user_type:1,  //0:管理员, 1:用户
+                user_account:'',
                 current_index:'',
                 items:[],
             }
         },
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            this.user_account = localStorage.getItem('user_account');  //管理员或用户
             console.log("user_type:", this.user_type);
             if(this.user_type == '1'){//普通管理员
                 this.items = [
@@ -107,6 +109,33 @@
         methods:{
             getUser: function(){
                 var self = this;
+            },
+            getDeviceList: function(params){//获取项目列表
+                var self = this;
+                self.loading = true;
+                self.$axios.post('/api/device/list',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.listData = res.data.extra.slice(0, self.page_size);
+                        self.pageTotal = res.data.total;
+                    }else{
+                        self.listData = [];
+                        self.$message.error(res.data.ret_msg)
+                    }
+                })
+            },
+            getProjectList: function(params){//获取项目列表
+                var self = this;
+                self.loading = true;
+                self.$axios.post('/api/project/array',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.prjOwnerList = res.data.extra;
+                    }else{
+                        self.prjOwnerList = [];
+                        self.$message.error(res.data.ret_msg)
+                    }
+                })
             },
             handleSelect: function(key, keyPath) {
                 //console.log('1113', key, this.current_index);

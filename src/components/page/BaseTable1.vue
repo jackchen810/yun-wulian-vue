@@ -87,18 +87,15 @@
                     }
                 };
                 self.loading = true;
-                self.$axios.post('/api/gateway/data/list', params).then(function(res){
+                self.$axios.post('/api/gateway/page/list', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        if(JSON.stringify(params) == '{}'){
-                            self.listData = res.data.extra.slice(0,10);
-                            self.pageTotal = res.data.total;
-                        }else{
-                            self.listData = res.data.extra;
-                            self.pageTotal = res.data.total;
-                        }
+                        self.listData = res.data.extra.slice(0, page_size);
+                        self.pageTotal = res.data.total;
+                    }else{
+                        self.listData = [];
+                        self.$message.error(res.data.ret_msg);
                     }
-
 
                     self.updateTimer = setTimeout(function(){
                         //self.getData(self.currentPage, self.page_size);

@@ -18,9 +18,7 @@
             <el-table-column prop="comment" label="备注说明"></el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
-                    <el-button class="btn1" type="text" size="small" @click="delProject(scope.row._id,scope.row.device_name,scope.$index)">删除</el-button>
-                    <el-button class="btn1" type="danger" size="small" v-if="scope.row.device_status =='normal'" @click="freezeDevice(scope.row._id,scope.row.device_name)">冻结</el-button>
-                    <el-button class="btn1" type="success" size="small" v-else @click="releaseDevice(scope.row._id,scope.row.device_name)">解冻</el-button>
+                    <el-button class="btn1" type="text" size="small" @click="delDevice(scope.row._id,scope.row.device_name,scope.$index)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -53,8 +51,11 @@
                         <el-button slot="trigger" size="small" type="primary">选取设备图片</el-button>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="设备名称" prop=device_name :label-width="formLabelWidth">
-                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                <el-form-item label="网关厂商"  :label-width="formLabelWidth">
+                    <el-radio-group v-model="form.gateway_vendor">
+                        <el-radio label="爱德佳创"></el-radio>
+                        <el-radio label="物通博联"></el-radio>
+                    </el-radio-group>
                 </el-form-item>
                 <el-form-item label="设备所属项目" prop="project_name" :label-width="formLabelWidth">
                     <el-select v-model="form.project_name" placeholder="请选择设备所属项目">
@@ -65,6 +66,12 @@
                                 :value="item">
                         </el-option>
                     </el-select>
+                </el-form-item>
+                <el-form-item label="设备名称" prop=device_name :label-width="formLabelWidth">
+                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="通道名称" prop=device_name :label-width="formLabelWidth" v-if="form.gateway_vendor=='爱德佳创'">
+                    <el-input v-model="form.channel_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注说明" prop="comment" :label-width="formLabelWidth">
                     <el-input v-model="form.comment" class="diainp" auto-complete="off"></el-input>
@@ -92,6 +99,7 @@
                 dialogFormVisible:false,
                 radio3:'全部',
                 form: {
+                    gateway_vendor:'爱德佳创',
                     file_name:'',
                     device_name:'',
                     project_name:'',
@@ -120,25 +128,29 @@
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
-            this.getDeviceList({user_account: this.user_account});
-            this.getProjectList({user_account: this.user_account});
+            this.getDeviceList(this.currentPage, this.page_size);
+            this.getProjectArray({user_account: this.user_account});
         },
         methods: {
-            getDeviceList: function(params){//获取项目列表
+            getDeviceList: function(current_page, page_size){//获取项目列表
                 var self = this;
+                var params = {
+                    page_size: page_size,
+                    current_page: current_page,
+                };
                 self.loading = true;
-                self.$axios.post('/api/device/list',params).then(function(res){
+                self.$axios.post('/api/device/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0, self.page_size);
+                        self.listData = res.data.extra.slice(0, page_size);
                         self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
-                        self.$message.error(res.data.ret_msg)
+                        self.$message.error(res.data.ret_msg);
                     }
                 })
             },
-            getProjectList: function(params){//获取项目列表
+            getProjectArray: function(params){//获取项目列表
                 var self = this;
                 self.loading = true;
                 self.$axios.post('/api/project/array',params).then(function(res){
@@ -153,21 +165,21 @@
             },
             handleCurrentChange:function(val){
                 this.currentPage = val;
-                this.getDeviceList({page_size:10,current_page:this.currentPage});
+                this.getDeviceList(this.currentPage, this.page_size);
             },
             clickDialogBtn: function(){
                 var self = this;
                 self.form.device_name = '';
                 this.dialogFormVisible=true;
             },
-            delProject: function(id,fileName,i){//删除
+            delDevice: function(id,fileName,i){//删除
                 var self = this;
                 var params = {
                     _id: id,
                     device_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/rom/del',params).then(function(res){
+                self.$axios.post('api/device/del',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
@@ -181,48 +193,6 @@
                     self.$message.error('删除失败');
                     self.loading = false;
                     console.log(err);
-                })
-            },
-            releaseDevice: function(id,fileName){//上架操作
-                var self = this;
-                var params = {
-                    _id: id,
-                    device_name:fileName
-                };
-                self.loading = true;
-                self.$axios.post('api/project/release',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.$message({message:'操作成功',type:'success'});
-                        self.getDeviceList({user_account: self.user_account});
-                    }else{
-                        self.$message.error(res.data.ret_msg)
-                    }
-
-                },function(err){
-                    self.$message.error('操作失败');
-                    self.loading = false;
-                })
-            },
-            freezeDevice: function(id,fileName){//下架操作
-                var self = this;
-                var params = {
-                    _id: id,
-                    device_name:fileName
-                };
-                self.loading = true;
-                self.$axios.post('api/project/hide',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.$message({message:'操作成功',type:'success'});
-                        self.getDeviceList({user_account: self.user_account});
-                    }else{
-                        self.$message.error(res.data.extra)
-                    }
-
-                },function(err){
-                    self.$message.error('操作失败');
-                    self.loading = false;
                 })
             },
             submitUpload: function(formName){
@@ -258,7 +228,7 @@
 
                 self.dialogFormVisible = false;
                 self.$refs.upload.clearFiles();
-                self.getDeviceList({user_account: self.user_account});
+                self.getDeviceList(self.currentPage, self.page_size);
             },
             handleError: function(err,file,fileList){
                 console.log("handleError", file.name);
