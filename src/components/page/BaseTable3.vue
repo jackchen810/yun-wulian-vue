@@ -97,7 +97,6 @@
                         self.$message.error(res.data.ret_msg);
                     }
 
-
                     self.updateTimer = setTimeout(function(){
                         //self.getData(self.currentPage, self.page_size);
                         //window.location.reload();

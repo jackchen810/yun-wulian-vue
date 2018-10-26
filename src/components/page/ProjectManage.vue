@@ -10,12 +10,12 @@
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加项目</el-button>
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
-            <el-table-column prop="update_time" label="创建时间" width="170"></el-table-column>
-            <el-table-column prop="project_name" label="项目名称" width="300"></el-table-column>
-            <el-table-column prop="project_local" label="项目地点" width="170"></el-table-column>
-            <el-table-column prop="user_account" label="项目管理员" width="160"></el-table-column>
-            <el-table-column prop="project_status" label="项目状态" width="160"></el-table-column>
-            <el-table-column prop="project_image" label="项目图片" width="160"></el-table-column>
+            <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
+            <el-table-column prop="project_name" label="项目名称" width="240"></el-table-column>
+            <el-table-column prop="project_local" label="项目地点" width="120"></el-table-column>
+            <el-table-column prop="user_account" label="项目管理员" width="120"></el-table-column>
+            <el-table-column prop="project_status" label="项目状态" width="100"></el-table-column>
+            <el-table-column prop="project_image" label="项目图片" width="450"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
@@ -91,7 +91,7 @@
             return {
                 user_type:1,  //0:管理员, 1:用户
                 user_account:'',
-                uploadUrl:"api/project/add",
+                uploadUrl:"api/project/manage/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
                 radio3:'全部',
@@ -132,13 +132,13 @@
         methods: {
 
             getProjectList: function(current_page, page_size){//获取项目列表
-                var self = this;
-                var params = {
+                let self = this;
+                let params = {
                     page_size: page_size,
                     current_page: current_page,
                 };
                 self.loading = true;
-                self.$axios.post('/api/project/page/list',params).then(function(res){
+                self.$axios.post('/api/project/manage/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.slice(0, page_size);
@@ -150,7 +150,7 @@
                 })
             },
             getAccount: function(params){//获取项目列表
-                var self = this;
+                let self = this;
                 self.loading = true;
                 self.$axios.post('/api/admin/array',params).then(function(res){
                     self.loading = false;
@@ -167,18 +167,18 @@
                 this.getProjectList(this.currentPage, this.page_size);
             },
             clickDialogBtn: function(){
-                var self = this;
+                let self = this;
                 self.form.project_name = '';
                 this.dialogFormVisible=true;
             },
             delProject: function(id,fileName,i){//删除
-                var self = this;
-                var params = {
+                let self = this;
+                let params = {
                     _id: id,
                     project_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/project/del',params).then(function(res){
+                self.$axios.post('api/project/manage/del',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
@@ -194,13 +194,13 @@
                 })
             },
             projectStatusUpdate: function(id, status){//下架操作
-                var self = this;
-                var params = {
+                let self = this;
+                let params = {
                     _id: id,
                     project_status:status
                 };
                 self.loading = true;
-                self.$axios.post('api/project/status/update',params).then(function(res){
+                self.$axios.post('api/project/manage/status/update',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'操作成功',type:'success'});
@@ -217,7 +217,7 @@
             },
             submitUpload: function(formName){
                 console.log("submitUpload", formName);
-                var self = this;
+                let self = this;
                 self.$refs[formName].validate(function(valid){
                     if(valid){
                         self.$refs.upload.submit();
@@ -234,7 +234,7 @@
             },
             handleSuccess: function(response,file,fileList){
                 console.log("handleSuccess", file.name);
-                var self = this;
+                let self = this;
                 if(response.ret_code == 0){
                     this.$message({message:'创建成功',type:'success'});
                 }else{
@@ -259,7 +259,7 @@
             handleChange:function(file, fileList) {
                 console.log("handleChange", file.name);
 
-                var reader=new FileReader();
+                let reader=new FileReader();
                 reader.onload=function(f){ };
                 //reader.readAsBinaryString(fileList[0]);
                 reader.readAsBinaryString(file.raw);

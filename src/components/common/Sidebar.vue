@@ -28,6 +28,7 @@
                 user_account:'',
                 current_index:'',
                 items:[],
+                prjOwnerList:[],
             }
         },
         created: function(){
@@ -78,27 +79,9 @@
                             },
                         ]
                     },
-                    {
-                        icon: 'el-icon-menu',
-                        index: '2',
-                        title: '津西项目',
-                        subs: [
-                            {
-                                index: '/basetable1?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
-                                title: '津西高级氧化1#设备'
-                            },
-                            {
-                                index: '/basetable2?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
-                                title: '津西高级氧化2#设备'
-                            },
-                            {
-                                index: '/basetable3?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
-                                title: '津西高级氧化3#设备'
-                            },
-                        ]
-                    },
                 ]
             }
+            this.loadProjectSidebar({});
         },
         computed:{
             onRoutes(){
@@ -108,26 +91,91 @@
         },
         methods:{
             getUser: function(){
-                var self = this;
+                let self = this;
             },
-            getDeviceList: function(params){//获取项目列表
-                var self = this;
+            loadProjectSidebar: async function (params){//获取项目列表
+                let self = this;
                 self.loading = true;
-                self.$axios.post('/api/device/list',params).then(function(res){
+                await self.$axios.post('/api/project/manage/array',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0, self.page_size);
-                        self.pageTotal = res.data.total;
-                    }else{
-                        self.listData = [];
-                        self.$message.error(res.data.ret_msg)
+                        self.prjOwnerList = res.data.extra;
+                     }
+                });
+
+                //加载各个项目
+                for(let i = 0; i < self.prjOwnerList.length; i++) {
+                    console.log('prjOwnerList:', self.prjOwnerList[i]);
+                    let project_name = self.prjOwnerList[i];
+                    let params = {
+                        filter: {'project_name': project_name},
+                    };
+                    await self.$axios.post('/api/device/manage/list',params).then(function(res){
+                        if(res.data.ret_code == 0){
+                            let prjitem = {
+                                icon: 'el-icon-menu',
+                                index: '2'+i,
+                                title: project_name,
+                                subs:[],
+                            };
+
+                            console.log('prjitem:', prjitem);
+                            for(let i = 0; i < res.data.total; i++) {
+                                let device_name = res.data.extra[i]['device_name'];
+                                let device_name_cn = res.data.extra[i]['device_name_cn'];
+                                let channel_name = res.data.extra[i]['channel_name'];
+                                //# 不识别
+                                let display_name = device_name_cn.replace("#","号");
+                                let subitem = {
+                                    index: '/basetable'+ i +'?device_name=' + device_name +
+                                    '&channel_name='+channel_name+'&display_name='+ display_name,
+                                    title: device_name_cn,
+                                };
+                                prjitem.subs.push(subitem);
+                            }
+                            //
+                            self.items.push(prjitem);
+                            console.log('prjitem:', prjitem);
+                        }
+                    })
+                }
+            },
+            pushProjectSidebar: async function(self, id, project_name){//获取项目列表
+                //let self = this;
+                self.loading = true;
+                let params = {
+                    filter: {'project_name': project_name},
+                };
+                self.$axios.post('/api/device/manage/list',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        let prjitem = {
+                            icon: 'el-icon-menu',
+                            index: id,
+                            title: project_name,
+                            subs:[],
+                        };
+                        for(let i = 0; i < res.data.total; i++) {
+                            let device_name = res.data.extra[i]['device_name'];
+                            let device_name_cn = res.data.extra[i]['device_name_cn'];
+                            let channel_name = res.data.extra[i]['channel_name'];
+                            let subitem = {
+                                index: '/basetable'+ i +'?device_name=' + device_name +
+                                    '&channel_name='+channel_name+'&display_name='+ device_name_cn,
+                                title: device_name_cn,
+                            };
+                            prjitem.subs.push(subitem);
+                        }
+                        //
+                        self.items.push(prjitem);
+                        console.log('prjitem:', prjitem);
                     }
                 })
             },
             getProjectList: function(params){//获取项目列表
                 var self = this;
                 self.loading = true;
-                self.$axios.post('/api/project/array',params).then(function(res){
+                self.$axios.post('/api/project/manage/array',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.prjOwnerList = res.data.extra;

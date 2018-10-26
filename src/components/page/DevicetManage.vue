@@ -10,11 +10,14 @@
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
-            <el-table-column prop="update_time" label="创建时间" width="170"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="300"></el-table-column>
+            <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
+            <el-table-column prop="device_name" label="设备名称" width="100"></el-table-column>
+            <el-table-column prop="channel_name" label="通道名称" width="100"></el-table-column>
+            <el-table-column prop="device_name_cn" label="设备中文名称" width="300"></el-table-column>
             <el-table-column prop="project_name" label="所属项目" width="160"></el-table-column>
-            <el-table-column prop="device_status" label="设备状态" width="160"></el-table-column>
-            <el-table-column prop="device_image" label="设备图片" width="160"></el-table-column>
+            <el-table-column prop="gateway_vendor" label="网关厂商" width="120"></el-table-column>
+            <el-table-column prop="device_status" label="设备状态" width="90"></el-table-column>
+            <el-table-column prop="device_image" label="设备图片" width="450"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
@@ -67,11 +70,14 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="设备名称" prop=device_name :label-width="formLabelWidth">
+                <el-form-item label="数据库设备字段" prop=device_name :label-width="formLabelWidth">
                     <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="通道名称" prop=device_name :label-width="formLabelWidth" v-if="form.gateway_vendor=='爱德佳创'">
+                <el-form-item label="数据库通道字段" prop=channel_name :label-width="formLabelWidth" v-if="form.gateway_vendor=='爱德佳创'">
                     <el-input v-model="form.channel_name" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="设备中文名称" prop=device_name_cn :label-width="formLabelWidth">
+                    <el-input v-model="form.device_name_cn" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注说明" prop="comment" :label-width="formLabelWidth">
                     <el-input v-model="form.comment" class="diainp" auto-complete="off"></el-input>
@@ -94,21 +100,29 @@
             return {
                 user_type:1,  //0:管理员, 1:用户
                 user_account:'',
-                uploadUrl:"api/device/add",
+                uploadUrl:"api/device/manage/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
                 radio3:'全部',
                 form: {
                     gateway_vendor:'爱德佳创',
+                    device_name_cn:'',
                     file_name:'',
                     device_name:'',
+                    channel_name:'',
                     project_name:'',
                     device_image:'',
                     comment:''
                 },
                 rules: {
                     device_name:[
-                        {required: true, message: '请输入设备名称', trigger: 'blur'}
+                        {required: true, message: '请输入数据库设备字段', trigger: 'blur'}
+                    ],
+                    channel_name:[
+                        {required: true, message: '请输入数据库通道字段', trigger: 'blur'}
+                    ],
+                    device_name_cn:[
+                        {required: true, message: '请输入设备中文名称', trigger: 'blur'}
                     ],
                     project_name:[
                         {required: true, message: '请输入所属项目', trigger: 'blur'}
@@ -119,6 +133,8 @@
                 loading:false,
                 listData:[],
                 prjOwnerList:[],
+                //deviceFieldList:[],
+                //channelFieldList:[],
 
                 pageTotal:1,
                 currentPage:1,
@@ -139,7 +155,7 @@
                     current_page: current_page,
                 };
                 self.loading = true;
-                self.$axios.post('/api/device/page/list',params).then(function(res){
+                self.$axios.post('/api/device/manage/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.slice(0, page_size);
@@ -153,7 +169,7 @@
             getProjectArray: function(params){//获取项目列表
                 var self = this;
                 self.loading = true;
-                self.$axios.post('/api/project/array',params).then(function(res){
+                self.$axios.post('/api/project/manage/array',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.prjOwnerList = res.data.extra;
@@ -179,7 +195,7 @@
                     device_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/device/del',params).then(function(res){
+                self.$axios.post('api/device/manage/del',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
@@ -221,7 +237,7 @@
                     this.$message.error('创建失败');
                 }
                 self.fileList = [];
-                self.form.device_name = '';
+                //self.form.device_name = '';
                 self.form.project_name = '';
                 self.form.comment = '';
                 //this.fullscreenLoading  = false;
