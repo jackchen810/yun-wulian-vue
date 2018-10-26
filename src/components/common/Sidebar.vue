@@ -35,29 +35,7 @@
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             console.log("user_type:", this.user_type);
-            if(this.user_type == '1'){//普通管理员
-                this.items = [
-                    {
-                        icon: 'el-icon-menu',
-                        index: '1',
-                        title: '津西项目',
-                        subs: [
-                            {
-                                index: '/basetable1?device_name=jinxi_1&channel_name=C1_D1&display_name=1号高级氧化设备',
-                                title: '津西高级氧化1#设备'
-                            },
-                            {
-                                index: '/basetable2?device_name=jinxi_2&channel_name=C2_D1&display_name=2号高级氧化设备',
-                                title: '津西高级氧化2#设备'
-                            },
-                            {
-                                index: '/basetable3?device_name=jinxi_3&channel_name=C3_D1&display_name=3号高级氧化设备',
-                                title: '津西高级氧化3#设备'
-                            },
-                        ]
-                    },
-                ]
-            }else{
+            if(this.user_type == '0'){//普通管理员
                 this.items = [
                     {
                         icon: 'el-icon-star-on',
@@ -90,13 +68,10 @@
             }
         },
         methods:{
-            getUser: function(){
-                let self = this;
-            },
             loadProjectSidebar: async function (params){//获取项目列表
                 let self = this;
                 self.loading = true;
-                await self.$axios.post('/api/project/manage/array',params).then(function(res){
+                await self.$axios.post('/api/project/manage/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.prjOwnerList = res.data.extra;
@@ -106,7 +81,8 @@
                 //加载各个项目
                 for(let i = 0; i < self.prjOwnerList.length; i++) {
                     console.log('prjOwnerList:', self.prjOwnerList[i]);
-                    let project_name = self.prjOwnerList[i];
+                    let project_name = self.prjOwnerList[i]['project_name'];
+                    let project_local = self.prjOwnerList[i]['project_local'];
                     let params = {
                         filter: {'project_name': project_name},
                     };
@@ -121,14 +97,17 @@
 
                             console.log('prjitem:', prjitem);
                             for(let i = 0; i < res.data.total; i++) {
-                                let device_name = res.data.extra[i]['device_name'];
-                                let device_name_cn = res.data.extra[i]['device_name_cn'];
-                                let channel_name = res.data.extra[i]['channel_name'];
+                                let dev_manage = res.data.extra[i];
+                                //let project_name = project_name;
+                                //let project_local = project_local;
+                                let device_name = dev_manage['device_name'];
+                                let device_name_cn = dev_manage['device_name_cn'];
+                                let channel_name = dev_manage['channel_name'];
                                 //# 不识别
                                 let display_name = device_name_cn.replace("#","号");
                                 let subitem = {
-                                    index: '/basetable'+ i +'?device_name=' + device_name +
-                                    '&channel_name='+channel_name+'&display_name='+ display_name,
+                                    index: '/basetable?device_name=' + device_name + '&project_name='+project_name +
+                                        '&project_local='+project_local + '&channel_name=' + channel_name+'&display_name=' + display_name,
                                     title: device_name_cn,
                                 };
                                 prjitem.subs.push(subitem);
@@ -139,51 +118,6 @@
                         }
                     })
                 }
-            },
-            pushProjectSidebar: async function(self, id, project_name){//获取项目列表
-                //let self = this;
-                self.loading = true;
-                let params = {
-                    filter: {'project_name': project_name},
-                };
-                self.$axios.post('/api/device/manage/list',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        let prjitem = {
-                            icon: 'el-icon-menu',
-                            index: id,
-                            title: project_name,
-                            subs:[],
-                        };
-                        for(let i = 0; i < res.data.total; i++) {
-                            let device_name = res.data.extra[i]['device_name'];
-                            let device_name_cn = res.data.extra[i]['device_name_cn'];
-                            let channel_name = res.data.extra[i]['channel_name'];
-                            let subitem = {
-                                index: '/basetable'+ i +'?device_name=' + device_name +
-                                    '&channel_name='+channel_name+'&display_name='+ device_name_cn,
-                                title: device_name_cn,
-                            };
-                            prjitem.subs.push(subitem);
-                        }
-                        //
-                        self.items.push(prjitem);
-                        console.log('prjitem:', prjitem);
-                    }
-                })
-            },
-            getProjectList: function(params){//获取项目列表
-                var self = this;
-                self.loading = true;
-                self.$axios.post('/api/project/manage/array',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.prjOwnerList = res.data.extra;
-                    }else{
-                        self.prjOwnerList = [];
-                        self.$message.error(res.data.ret_msg)
-                    }
-                })
             },
             handleSelect: function(key, keyPath) {
                 //console.log('1113', key, this.current_index);
