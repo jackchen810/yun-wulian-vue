@@ -5,9 +5,9 @@
                 <h3 class="chart-tit-item">历史曲线: {{this.formC.tag_desc}}</h3>
                 <div class="selete-center" style="width:100%;">
                     <el-select v-model="formC.historyDataType" style="width:180px;" @change="choseHistoryTime" placeholder="请选择时间">
-                        <el-option key="" label="最近60分钟数据" value="1"></el-option>
-                        <el-option key="" label="最近60小时数据" value="60"></el-option>
-                        <el-option key="" label="最近60天数据" value="100"> </el-option>
+                        <el-option key="1" label="最近60分钟数据" value="1"></el-option>
+                        <el-option key="2" label="最近60小时数据" value="60"></el-option>
+                        <el-option key="3" label="最近60天数据" value="100"> </el-option>
                     </el-select>
                 </div>
                 <div id="mychart" style="width:1300px;height:500px;"></div>

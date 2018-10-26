@@ -60,7 +60,8 @@
                     "device_name":"jinxi_1",
                     "device_name_cn":"高级氧化1#设备",
                     "device_run_status":"运行",
-                    "device_link_status":"正常"}],
+                    "device_link_status":"正常",
+                    "update_time":"" }],
                 listData:[],
 
                 pageTotal:1,
@@ -99,9 +100,6 @@
             getData: function(current_page, page_size){//获取rom列表
                 let self = this;
                 let params = {
-                    channel_name: self.system_setup_list[0].channel_name,
-                    page_size: page_size,
-                    current_page: current_page,
                     filter: {
                         device_name: self.system_setup_list[0].device_name ,
                     }
@@ -109,9 +107,9 @@
                 self.loading = true;
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
+                    let channel_name = self.system_setup_list[0].channel_name;
                     console.log('extra:', res.data.extra);
                     console.log('params:', params);
-                    let channel_name = self.system_setup_list[0].channel_name;
                     console.log('channel_name:', channel_name);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data[channel_name];
