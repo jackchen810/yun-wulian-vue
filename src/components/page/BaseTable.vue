@@ -15,6 +15,8 @@
             <el-table-column prop="device_link_status" label="设备链路状态" width="120"></el-table-column>
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
         </el-table>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_status">查看模块状态</el-button>
+        <h4 class="title_box">详细数据:</h4>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="id" label="名称" width="180"></el-table-column>
@@ -145,6 +147,14 @@
                 //this.$message({message: params,type:'warning'});
                 this.$router.push({name: '/charts', params :params});
             },
+            page_forward_module_status() {
+                console.log('page_forward_module_status!');
+                let params = {
+                    device_name: this.system_setup_list[0].device_name,
+                    channel_name: this.system_setup_list[0].channel_name,
+                };
+                this.$router.push({name: '/devicemodule', params :params});
+            }
         },
         computed:{
 
@@ -154,11 +164,9 @@
 
 <style>
     .rad-group{margin-bottom:20px;}
-    .handle-input{  width: 300px;  display: inline-block;  }
-    .handle-box2{display:inline-block;float:right;}
     .orange{color:#eb9e05;background-color:inherit;}
-    .btn2{margin-bottom:5px;margin-left:0;}
-    .diainp{width:217px;}
+    .title_box{margin-top:50px;}
+    .btn_box{margin-top: 20px;margin-right: 50px;}
     .diainp2{width:400px;}
     .upload-demo .el-upload {cursor: pointer;position: relative;overflow: hidden;}
     .upload-demo .el-upload:hover {border-color: #409EFF;}

@@ -43,11 +43,11 @@
             }
         },
         created: function(){
-            var self = this;
+            let self = this;
 
             this.getRountPush;
 
-            var params = {
+            let params = {
                 'device_name':self.formC.device_name,
                 'channel_name':self.formC.channel_name,
                 'tag_name':self.formC.tag_name
@@ -56,11 +56,11 @@
             self.getChartHistoryData(params);
         },
         mounted: function(){
-            var self = this;
+            let self = this;
         },
         methods:{
             choseHistoryTime: function(){
-                var self = this;
+                let self = this;
                 let params = {
                     'device_name':self.formC.device_name,
                     'channel_name':self.formC.channel_name,
@@ -69,8 +69,8 @@
                 self.getChartHistoryData(params)
             },
             getChartHistoryData: function (params) {
-                var self = this;
-                var datUrl = '';
+                let self = this;
+                let datUrl = '';
 
                 if (self.formC.historyDataType == '1'){
                     datUrl = 'api/gateway/minute1/list';
@@ -121,7 +121,7 @@
         },
         computed:{
             getRountPush: function() {
-                //var task_id = this.$route.params.device_name;
+                //let task_id = this.$route.params.device_name;
                 //this.$message({message: this.$route.params,type:'warning'});
 
                 if (typeof(this.$route.params.device_name) === "undefined") {

@@ -32,6 +32,11 @@ export default new Router({
                     component: resolve => require(['../components/page/DevicetManage.vue'], resolve)     // vue-datasource组件
                 },
                 {
+                    path: '/devicemodule',
+                    name: '/devicemodule',
+                    component: resolve => require(['../components/page/DevicetModule.vue'], resolve)     // vue-datasource组件
+                },
+                {
                     path: '/accountmanage',
                     component: resolve => require(['../components/page/AccountManage.vue'], resolve)
                 },
