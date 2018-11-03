@@ -10,7 +10,7 @@
         <el-table :data="system_setup_list" style="width: 100%" ref="multileTable">
             <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
             <el-table-column prop="project_local" label="装备地点" width="100"></el-table-column>
-            <el-table-column prop="device_name_cn" label="设备名称" width="180"></el-table-column>
+            <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
             <el-table-column prop="device_run_status" label="设备运行状态" width="120"></el-table-column>
             <el-table-column prop="device_link_status" label="设备链路状态" width="120"></el-table-column>
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
@@ -59,8 +59,8 @@
                     "channel_name":"C1_D1",
                     "project_name":"津西钢铁脱销项目",
                     "project_local":"津西",
-                    "device_name":"jinxi_1",
-                    "device_name_cn":"高级氧化1#设备",
+                    "devunit_name":"jinxi_1",
+                    "device_name":"高级氧化1#设备",
                     "device_run_status":"运行",
                     "device_link_status":"正常",
                     "update_time":"" }],
@@ -79,7 +79,7 @@
                 this.system_setup_list[0].project_local = this.$route.query.project_local;
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
                 this.system_setup_list[0].channel_name = this.$route.query.channel_name;
-                this.system_setup_list[0].device_name_cn = this.$route.query.display_name;
+                this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
             }
             this.getData(1, this.page_size);
         },
@@ -92,7 +92,7 @@
                     this.system_setup_list[0].project_local = this.$route.query.project_local;
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
                     this.system_setup_list[0].channel_name = this.$route.query.channel_name;
-                    this.system_setup_list[0].device_name_cn = this.$route.query.display_name;
+                    this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 }
                 //console.log(this.getStatus(this.$route.path))
                 this.getData(1, this.page_size);
@@ -103,7 +103,7 @@
                 let self = this;
                 let params = {
                     filter: {
-                        device_name: self.system_setup_list[0].device_name ,
+                        device_name: self.system_setup_list[0].devunit_name ,
                     }
                 };
                 self.loading = true;
@@ -138,7 +138,7 @@
             },
             page_forward_chart: function(tag_name, tag_desc){
                 let params = {
-                    device_name: this.system_setup_list[0].device_name,
+                    devunit_name: this.system_setup_list[0].devunit_name,
                     channel_name: this.system_setup_list[0].channel_name,
                     tag_name: tag_name,
                     tag_desc: tag_desc,

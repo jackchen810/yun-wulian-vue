@@ -23,7 +23,7 @@
             return {
                 //device_name:localStorage.getItem('ms_username'),
                 formC:{
-                    device_name: '',
+                    devunit_name: '',
                     channel_name: '',
                     tag_name: '',
                     tag_desc: '',
@@ -48,7 +48,7 @@
             this.getRountPush;
 
             let params = {
-                'device_name':self.formC.device_name,
+                'device_name':self.formC.devunit_name,
                 'channel_name':self.formC.channel_name,
                 'tag_name':self.formC.tag_name
             };
@@ -62,7 +62,7 @@
             choseHistoryTime: function(){
                 let self = this;
                 let params = {
-                    'device_name':self.formC.device_name,
+                    'device_name':self.formC.devunit_name,
                     'channel_name':self.formC.channel_name,
                     'tag_name':self.formC.tag_name
                 };
@@ -124,18 +124,18 @@
                 //let task_id = this.$route.params.device_name;
                 //this.$message({message: this.$route.params,type:'warning'});
 
-                if (typeof(this.$route.params.device_name) === "undefined") {
-                    this.formC.device_name = localStorage.getItem('device_name');
+                if (typeof(this.$route.params.devunit_name) === "undefined") {
+                    this.formC.devunit_name = localStorage.getItem('devunit_name');
                     this.formC.channel_name = localStorage.getItem('channel_name');
                     this.formC.tag_name = localStorage.getItem('tag_name');
                     this.formC.tag_desc = localStorage.getItem('tag_desc');
                 }
                 else{
-                    this.formC.device_name = this.$route.params.device_name;
+                    this.formC.devunit_name = this.$route.params.devunit_name;
                     this.formC.channel_name = this.$route.params.channel_name;
                     this.formC.tag_name = this.$route.params.tag_name;
                     this.formC.tag_desc = this.$route.params.tag_desc;
-                    localStorage.setItem('device_name', this.formC.device_name);
+                    localStorage.setItem('devunit_name', this.formC.devunit_name);
                     localStorage.setItem('channel_name', this.formC.channel_name);
                     localStorage.setItem('tag_name', this.formC.tag_name);
                     localStorage.setItem('tag_desc', this.formC.tag_desc);

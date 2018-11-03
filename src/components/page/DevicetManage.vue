@@ -11,9 +11,9 @@
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="100"></el-table-column>
-            <el-table-column prop="channel_name" label="通道名称" width="100"></el-table-column>
-            <el-table-column prop="device_name_cn" label="设备中文名称" width="300"></el-table-column>
+            <el-table-column prop="device_name" label="设备名称" width="300"></el-table-column>
+            <el-table-column prop="devunit_name" label="设备字段" width="100"></el-table-column>
+            <el-table-column prop="channel_name" label="通道字段" width="100"></el-table-column>
             <el-table-column prop="project_name" label="所属项目" width="160"></el-table-column>
             <el-table-column prop="gateway_vendor" label="网关厂商" width="120"></el-table-column>
             <el-table-column prop="device_status" label="设备状态" width="90"></el-table-column>
@@ -70,14 +70,14 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="数据库设备字段" prop=device_name :label-width="formLabelWidth">
-                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
+                    <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="数据库通道字段" prop=channel_name :label-width="formLabelWidth" v-if="form.gateway_vendor=='爱德佳创'">
                     <el-input v-model="form.channel_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="设备中文名称" prop=device_name_cn :label-width="formLabelWidth">
-                    <el-input v-model="form.device_name_cn" class="diainp" auto-complete="off"></el-input>
+                <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
+                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注说明" prop="comment" :label-width="formLabelWidth">
                     <el-input v-model="form.comment" class="diainp" auto-complete="off"></el-input>
@@ -106,7 +106,7 @@
                 radio3:'全部',
                 form: {
                     gateway_vendor:'爱德佳创',
-                    device_name_cn:'',
+                    devunit_name:'',
                     file_name:'',
                     device_name:'',
                     channel_name:'',
@@ -115,14 +115,14 @@
                     comment:''
                 },
                 rules: {
-                    device_name:[
+                    devunit_name:[
                         {required: true, message: '请输入数据库设备字段', trigger: 'blur'}
                     ],
                     channel_name:[
                         {required: true, message: '请输入数据库通道字段', trigger: 'blur'}
                     ],
-                    device_name_cn:[
-                        {required: true, message: '请输入设备中文名称', trigger: 'blur'}
+                    device_name:[
+                        {required: true, message: '请输入设备名称', trigger: 'blur'}
                     ],
                     project_name:[
                         {required: true, message: '请输入所属项目', trigger: 'blur'}

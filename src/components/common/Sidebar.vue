@@ -101,14 +101,14 @@
                                 //let project_name = project_name;
                                 //let project_local = project_local;
                                 let device_name = dev_manage['device_name'];
-                                let device_name_cn = dev_manage['device_name_cn'];
+                                let devunit_name = dev_manage['devunit_name'];
                                 let channel_name = dev_manage['channel_name'];
                                 //# 不识别
-                                let display_name = device_name_cn.replace("#","号");
+                                let display_name = device_name.replace("#","%23");
                                 let subitem = {
-                                    index: '/basetable?device_name=' + device_name + '&project_name='+project_name +
-                                        '&project_local='+project_local + '&channel_name=' + channel_name+'&display_name=' + display_name,
-                                    title: device_name_cn,
+                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +
+                                        '&project_local='+project_local + '&channel_name=' + channel_name+'&devunit_name=' + devunit_name,
+                                    title: device_name,
                                 };
                                 prjitem.subs.push(subitem);
                             }
