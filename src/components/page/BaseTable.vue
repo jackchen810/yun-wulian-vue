@@ -110,8 +110,9 @@
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
                     let channel_name = self.system_setup_list[0].channel_name;
+                    let devunit_name = self.system_setup_list[0].devunit_name;
                     console.log('extra:', res.data.extra);
-                    console.log('params:', params);
+                    console.log('devunit_name:', devunit_name);
                     console.log('channel_name:', channel_name);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data[channel_name];
@@ -150,9 +151,10 @@
             page_forward_module_status() {
                 console.log('page_forward_module_status!');
                 let params = {
-                    device_name: this.system_setup_list[0].device_name,
+                    devunit_name: this.system_setup_list[0].devunit_name,
                     channel_name: this.system_setup_list[0].channel_name,
                 };
+                console.log('push params:', params);
                 this.$router.push({name: '/devicemodule', params :params});
             }
         },
@@ -167,7 +169,6 @@
     .orange{color:#eb9e05;background-color:inherit;}
     .title_box{margin-top:50px;}
     .btn_box{margin-top: 20px;margin-right: 50px;}
-    .diainp2{width:400px;}
     .upload-demo .el-upload {cursor: pointer;position: relative;overflow: hidden;}
     .upload-demo .el-upload:hover {border-color: #409EFF;}
 </style>

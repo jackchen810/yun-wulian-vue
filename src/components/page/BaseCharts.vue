@@ -43,17 +43,15 @@
             }
         },
         created: function(){
-            let self = this;
-
             this.getRountPush;
 
             let params = {
-                'device_name':self.formC.devunit_name,
-                'channel_name':self.formC.channel_name,
-                'tag_name':self.formC.tag_name
+                'device_name':this.formC.devunit_name,
+                'channel_name':this.formC.channel_name,
+                'tag_name':this.formC.tag_name
             };
 
-            self.getChartHistoryData(params);
+            this.getChartHistoryData(params);
         },
         mounted: function(){
             let self = this;
@@ -121,6 +119,7 @@
         },
         computed:{
             getRountPush: function() {
+                console.log('route push into baseCharts!');
                 //let task_id = this.$route.params.device_name;
                 //this.$message({message: this.$route.params,type:'warning'});
 
@@ -140,6 +139,8 @@
                     localStorage.setItem('tag_name', this.formC.tag_name);
                     localStorage.setItem('tag_desc', this.formC.tag_desc);
                 }
+
+                console.log('$route.params:', this.$route.params);
 
                 //因为在main.js中已经全局注册了store，所以这里直接用this.$直接使用。
                 //return task_id;

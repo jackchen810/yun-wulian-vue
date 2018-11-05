@@ -24,10 +24,9 @@
             return {
                 user_type:1,  //0:管理员, 1:用户
                 user_account:'',
-                isShow:localStorage.getItem('userMsg') =='1'?false:true,
 
                 channel_name:"C1_D1",
-                device_name:"jinxi_1",
+                devunit_name:"jinxi_1",
                 listData:[],
                 listAlarm:[],
                 loading:false,
@@ -38,6 +37,7 @@
             }
         },
         created: function(){
+            this.getRountPush;
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             this.getDeviceModuleStatus();
@@ -46,7 +46,7 @@
             getDeviceModuleStatus: function(){//获取项目列表
                 let self = this;
                 let params = {
-                    'device_name':self.device_name,
+                    'device_name':self.devunit_name,
                     'channel_name':self.channel_name,
                 };
                 self.loading = true;
@@ -64,20 +64,22 @@
         },
         computed:{
             getRountPush: function() {
-                //var task_id = this.$route.params.device_name;
-                //this.$message({message: this.$route.params,type:'warning'});
+                console.log('route push into device!');
 
-                if (typeof(this.$route.params.device_name) === "undefined") {
-                    this.device_name = localStorage.getItem('device_name');
+                if (typeof(this.$route.params.devunit_name) === "undefined") {
+                    this.devunit_name = localStorage.getItem('devunit_name');
                     this.channel_name = localStorage.getItem('channel_name');
+                    console.log('devunit_name:', this.devunit_name);
+                    console.log('channel_name:', this.channel_name);
                 }
                 else{
-                    this.device_name = this.$route.params.device_name;
+                    this.devunit_name = this.$route.params.devunit_name;
                     this.channel_name = this.$route.params.channel_name;
-                    localStorage.setItem('device_name', this.device_name);
+                    localStorage.setItem('devunit_name', this.devunit_name);
                     localStorage.setItem('channel_name', this.channel_name);
                 }
 
+                console.log('get $route.params:', this.$route.params);
                 //因为在main.js中已经全局注册了store，所以这里直接用this.$直接使用。
                 //return task_id;
             }
