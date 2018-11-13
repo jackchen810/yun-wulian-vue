@@ -37,7 +37,8 @@ axios.interceptors.response.use((response) => {
     const data = response.data;
     //console.log('ret_msg', data.ret_msg, data.ret_code);
     switch (data.ret_code){
-        case 2000: {
+        case 2000:
+        case 2001: {
             ///session 超时返回2000
             //跳转到登录页面
             router.replace({

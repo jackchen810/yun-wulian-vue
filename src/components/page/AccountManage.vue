@@ -233,7 +233,7 @@
                 self.loading = true;
                 self.$axios.post('api/admin/list', params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1010'){//权限不足
+                    if(res.data.ret_code == '2001'){//权限不足
                         self.emptyMsg = res.data.extra;
                     }
                     if(res.data.ret_code == 0){
