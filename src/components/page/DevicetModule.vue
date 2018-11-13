@@ -1,7 +1,7 @@
 <template>
     <div v-loading="loading" style="float:right;">
         <div class="thumbnail"  v-for="(subitem, index) in listData" :key="index">
-            <img src="https://dsjiaqi.cn/image/upload_06a23bf183e53c076df887d1a94fe336.jpg" class="image">
+            <img src="https://dsjiaqi.cn/image/module_o3_2kg.jpg" class="image">
             <span>模块{{index+1}}</span>
             <div class="bottom">
                 <span>运行状态：</span>
