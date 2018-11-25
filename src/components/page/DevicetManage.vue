@@ -8,17 +8,55 @@
         </div>
         <div class="handle-box rad-group" v-if="isShow">
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
+            <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogBtn">保存修改</el-button>
         </div>
-        <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
+        <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading"  @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="300"></el-table-column>
-            <el-table-column prop="devunit_name" label="设备字段" width="100"></el-table-column>
-            <el-table-column prop="channel_name" label="通道字段" width="100"></el-table-column>
-            <el-table-column prop="project_name" label="所属项目" width="160"></el-table-column>
-            <el-table-column prop="gateway_vendor" label="网关厂商" width="120"></el-table-column>
+            <el-table-column prop="device_name" label="设备名称" width="300">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.device_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.device_name }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="devunit_name" label="设备字段" width="100">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.devunit_name }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="channel_name" label="通道字段" width="100">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.channel_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.channel_name }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="project_name" label="所属项目" width="160">
+                <template slot-scope="scope" >
+                    <el-select size="small" v-model="form.project_name" placeholder="请选择设备所属项目" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property">
+                        <el-option
+                                v-for="item in prjOwnerList"
+                                :key="item"
+                                :label="item"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+                    <span v-else>{{ scope.row.project_name }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="gateway_vendor" label="网关厂商" width="120">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.gateway_vendor" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.gateway_vendor }}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="device_status" label="设备状态" width="90"></el-table-column>
             <el-table-column prop="device_image" label="设备图片" width="450"></el-table-column>
-            <el-table-column prop="comment" label="备注说明"></el-table-column>
+            <el-table-column prop="comment" label="备注说明"><
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.comment" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.comment }}</span>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
                     <el-button class="btn1" type="text" size="small" @click="delDevice(scope.row._id,scope.row.device_name,scope.$index)">删除</el-button>
@@ -103,6 +141,8 @@
                 uploadUrl:"api/device/manage/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
+                editRowId:'-1',
+                editColumnKey:'-1',
                 radio3:'全部',
                 form: {
                     gateway_vendor:'爱德佳创',
@@ -258,6 +298,21 @@
                 reader.onload=function(f){ };
                 //reader.readAsBinaryString(fileList[0]);
                 reader.readAsBinaryString(file.raw);
+            },
+            handleEdit(index, row) {
+                console.log('handleEdit', index, row);
+            },
+            handleCellDbClick(row, column) {
+                console.log('handleCellDbClick', row[column.property], column.property);
+                this.editRowId = row._id;
+                this.editColumnKey = column.property;
+            },
+            handleRowClick(row, event, column) {
+                console.log('handleRowClick', row[column.property], column.property);
+                if (column.property != this.editColumnKey || row._id != this.editRowId) {
+                    this.editRowId = '-1';
+                    this.editColumnKey = '-1';
+                }
             },
         },
         computed:{
