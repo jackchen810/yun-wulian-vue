@@ -50,8 +50,6 @@
                 fullscreenLoading: false,
 
                 updateTimer: '',
-                //device_name: 'jinxi_1',
-                //channel_name: 'C1_D1',
 
                 system_setup_list:[{
                     //"channel_name":"C1_D1",
@@ -76,7 +74,6 @@
                 this.system_setup_list[0].project_name = this.$route.query.project_name;
                 this.system_setup_list[0].project_local = this.$route.query.project_local;
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
-                this.system_setup_list[0].channel_name = this.$route.query.channel_name;
                 this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
             }
             this.getData(1, this.page_size);
@@ -89,7 +86,6 @@
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
                     this.system_setup_list[0].project_local = this.$route.query.project_local;
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
-                    this.system_setup_list[0].channel_name = this.$route.query.channel_name;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 }
                 //console.log(this.getStatus(this.$route.path))
@@ -107,11 +103,9 @@
                 self.loading = true;
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
-                    let channel_name = self.system_setup_list[0].channel_name;
                     let devunit_name = self.system_setup_list[0].devunit_name;
                     console.log('extra:', res.data.extra);
                     console.log('devunit_name:', devunit_name);
-                    console.log('channel_name:', channel_name);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
