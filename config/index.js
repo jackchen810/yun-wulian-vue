@@ -32,7 +32,7 @@ module.exports = {
         proxyTable: {
             '/api':{
                 //8000 是后端地址端口，local运行时前端使用8001，后端使用8000 端口
-                target:'http://localhost:8000',  // 接口域名
+                target:'http://localhost',  // 接口域名
                 changeOrigin:true,  //是否跨域
                 pathRewrite:{
                     '^/api':'/api'   //需要api
