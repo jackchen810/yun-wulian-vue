@@ -2,7 +2,7 @@
     <div v-loading="loading" style="overflow:auto;">
         <div class="cont-charts" style="padding:30px 0;">
             <div class="chart-choose" style="width:100%;">
-                <h3 class="chart-tit-item">历史曲线: {{this.formC.tag_desc}}</h3>
+                <h3 class="chart-tit-item">历史曲线: {{this.formC.var_name}}</h3>
                 <div class="selete-center" style="width:100%;">
                     <el-select v-model="formC.historyDataType" style="width:180px;" @change="choseHistoryTime" placeholder="请选择时间">
                         <el-option key="1" label="最近60分钟数据" value="1"></el-option>
@@ -25,8 +25,8 @@
                 formC:{
                     devunit_name: '',
                     channel_name: '',
-                    tag_name: '',
-                    tag_desc: '',
+                    var_name: '',
+                    var_id: '',
                     historyDataType: '1',
                     seriesHistoryData:[],
                     xAxisHistoryData:[],
@@ -46,11 +46,12 @@
             this.getRountPush;
 
             let params = {
-                'device_name':this.formC.devunit_name,
-                'channel_name':this.formC.channel_name,
-                'tag_name':this.formC.tag_name
+                'devunit_name':this.formC.devunit_name,
+                'var_name':this.formC.var_name
             };
 
+
+            console.log('route created!', this.formC.devunit_name);
             this.getChartHistoryData(params);
         },
         mounted: function(){
@@ -60,9 +61,8 @@
             choseHistoryTime: function(){
                 let self = this;
                 let params = {
-                    'device_name':self.formC.devunit_name,
-                    'channel_name':self.formC.channel_name,
-                    'tag_name':self.formC.tag_name
+                    'devunit_name':self.formC.devunit_name,
+                    'var_name':self.formC.var_name
                 };
                 self.getChartHistoryData(params)
             },
@@ -80,8 +80,9 @@
                     datUrl = 'api/gateway/day1/list';
                 }
 
+                //console.log('post url:', datUrl, 'params:', params);
                 self.loading = true;
-                self.$axios.post(datUrl,params).then(function(res){
+                self.$axios.post(datUrl, params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0) {
                         self.formC.xAxisHistoryData = res.data.extra.timeList;
@@ -119,25 +120,22 @@
         },
         computed:{
             getRountPush: function() {
-                console.log('route push into baseCharts!');
+                console.log('route para by baseTable!');
                 //let task_id = this.$route.params.device_name;
                 //this.$message({message: this.$route.params,type:'warning'});
 
                 if (typeof(this.$route.params.devunit_name) === "undefined") {
                     this.formC.devunit_name = localStorage.getItem('devunit_name');
-                    this.formC.channel_name = localStorage.getItem('channel_name');
-                    this.formC.tag_name = localStorage.getItem('tag_name');
-                    this.formC.tag_desc = localStorage.getItem('tag_desc');
+                    this.formC.var_name = localStorage.getItem('var_name');
+                    this.formC.var_id = localStorage.getItem('var_id');
                 }
                 else{
                     this.formC.devunit_name = this.$route.params.devunit_name;
-                    this.formC.channel_name = this.$route.params.channel_name;
-                    this.formC.tag_name = this.$route.params.tag_name;
-                    this.formC.tag_desc = this.$route.params.tag_desc;
+                    this.formC.var_name = this.$route.params.var_name;
+                    this.formC.var_id = this.$route.params.var_id;
                     localStorage.setItem('devunit_name', this.formC.devunit_name);
-                    localStorage.setItem('channel_name', this.formC.channel_name);
-                    localStorage.setItem('tag_name', this.formC.tag_name);
-                    localStorage.setItem('tag_desc', this.formC.tag_desc);
+                    localStorage.setItem('var_name', this.formC.var_name);
+                    localStorage.setItem('var_id', this.formC.var_id);
                 }
 
                 console.log('$route.params:', this.$route.params);

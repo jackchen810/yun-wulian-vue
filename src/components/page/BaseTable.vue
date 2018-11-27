@@ -19,13 +19,11 @@
         <h4 class="title_box">详细数据:</h4>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
-            <el-table-column prop="id" label="名称" width="180"></el-table-column>
-            <el-table-column prop="desc" label="描述" width="240"></el-table-column>
-            <el-table-column prop="quality" label="质量" width="100"></el-table-column>
-            <el-table-column prop="value" label="值"></el-table-column>
+            <el-table-column prop="varName" label="描述" width="240"></el-table-column>
+            <el-table-column prop="varValue" label="值"></el-table-column>
             <el-table-column label="操作" width="250">
             <template slot-scope="scope">
-                <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.id, scope.row.desc)">查看历史曲线</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.varName, scope.row.varId)">查看历史曲线</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -56,7 +54,7 @@
                 //channel_name: 'C1_D1',
 
                 system_setup_list:[{
-                    "channel_name":"C1_D1",
+                    //"channel_name":"C1_D1",
                     "project_name":"津西钢铁脱销项目",
                     "project_local":"津西",
                     "devunit_name":"jinxi_1",
@@ -103,7 +101,7 @@
                 let self = this;
                 let params = {
                     filter: {
-                        device_name: self.system_setup_list[0].devunit_name ,
+                        devunit_name: self.system_setup_list[0].devunit_name ,
                     }
                 };
                 self.loading = true;
@@ -115,7 +113,7 @@
                     console.log('devunit_name:', devunit_name);
                     console.log('channel_name:', channel_name);
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.data[channel_name];
+                        self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
                         //self.pageTotal = res.data.total;
                     }else{
@@ -137,12 +135,11 @@
             filterTag:function(value, row) {
                 return row.comment === value;
             },
-            page_forward_chart: function(tag_name, tag_desc){
+            page_forward_chart: function(var_name, var_id){
                 let params = {
                     devunit_name: this.system_setup_list[0].devunit_name,
-                    channel_name: this.system_setup_list[0].channel_name,
-                    tag_name: tag_name,
-                    tag_desc: tag_desc,
+                    var_name: var_name,
+                    var_id: var_id,
                 };
 
                 //this.$message({message: params,type:'warning'});
@@ -152,7 +149,6 @@
                 console.log('page_forward_module_status!');
                 let params = {
                     devunit_name: this.system_setup_list[0].devunit_name,
-                    channel_name: this.system_setup_list[0].channel_name,
                 };
                 console.log('push params:', params);
                 this.$router.push({name: '/devicemodule', params :params});

@@ -107,7 +107,7 @@
                                 let display_name = device_name.replace("#","%23");
                                 let subitem = {
                                     index: '/basetable?device_name=' + display_name + '&project_name='+project_name +
-                                        '&project_local='+project_local + '&channel_name=' + channel_name+'&devunit_name=' + devunit_name,
+                                        '&project_local='+project_local +'&devunit_name=' + devunit_name,
                                     title: device_name,
                                 };
                                 prjitem.subs.push(subitem);

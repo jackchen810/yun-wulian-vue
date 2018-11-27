@@ -46,8 +46,7 @@
             getDeviceModuleStatus: function(){//获取项目列表
                 let self = this;
                 let params = {
-                    'device_name':self.devunit_name,
-                    'channel_name':self.channel_name,
+                    'devunit_name':self.devunit_name
                 };
                 self.loading = true;
                 self.$axios.post('/api/module/run/status',params).then(function(res){
@@ -68,15 +67,11 @@
 
                 if (typeof(this.$route.params.devunit_name) === "undefined") {
                     this.devunit_name = localStorage.getItem('devunit_name');
-                    this.channel_name = localStorage.getItem('channel_name');
                     console.log('devunit_name:', this.devunit_name);
-                    console.log('channel_name:', this.channel_name);
                 }
                 else{
                     this.devunit_name = this.$route.params.devunit_name;
-                    this.channel_name = this.$route.params.channel_name;
                     localStorage.setItem('devunit_name', this.devunit_name);
-                    localStorage.setItem('channel_name', this.channel_name);
                 }
 
                 console.log('get $route.params:', this.$route.params);
