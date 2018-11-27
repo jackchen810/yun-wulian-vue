@@ -52,7 +52,6 @@
                 updateTimer: '',
 
                 system_setup_list:[{
-                    //"channel_name":"C1_D1",
                     "project_name":"津西钢铁脱销项目",
                     "project_local":"津西",
                     "devunit_name":"jinxi_1",
@@ -104,7 +103,7 @@
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
                     let devunit_name = self.system_setup_list[0].devunit_name;
-                    console.log('extra:', res.data.extra);
+                    console.log('extra:', res.data);
                     console.log('devunit_name:', devunit_name);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data;
