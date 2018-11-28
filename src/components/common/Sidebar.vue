@@ -102,7 +102,6 @@
                                 //let project_local = project_local;
                                 let device_name = dev_manage['device_name'];
                                 let devunit_name = dev_manage['devunit_name'];
-                                let channel_name = dev_manage['channel_name'];
                                 //# 不识别
                                 let display_name = device_name.replace("#","%23");
                                 let subitem = {

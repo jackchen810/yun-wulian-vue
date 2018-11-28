@@ -8,16 +8,16 @@
         </div>
         <el-form :inline="true" class="handle-box">
             <el-form-item>
-                <el-button type="primary" icon="plus" :disabled="isSuper=='0'?false:true" class="handle-del mr10" @click="dialogFormVisible=true">新建子渠道</el-button>
+                <el-button type="primary" icon="plus" :disabled="user_type=='0'?false:true" class="handle-del mr10" @click="showDialogCreateUser=true">新建子渠道</el-button>
             </el-form-item>
             <el-form-item label="">
                 <el-input v-model="search_word" placeholder="请输入渠道名称或账号查找" class="handle-input mr10"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" icon="search" :disabled="isSuper=='0'?false:true" @click="search">查询</el-button>
+                <el-button type="primary" icon="search" :disabled="user_type=='0'?false:true" @click="search">查询</el-button>
             </el-form-item>
         </el-form>
-        <div class='rad-group' v-if="isSuper =='0'?true:false">
+        <div class='rad-group' v-if="user_type =='0'?true:false">
             <el-radio-group v-model="radio3" @change="changeTab">
                 <el-radio-button label="all">全部</el-radio-button>
                 <el-radio-button label="0">未冻结</el-radio-button>
@@ -26,7 +26,7 @@
         </div>
         <el-table :data="userData" border style="width: 100%" ref="multipleTable" :empty-text="emptyMsg" v-loading="loading">
             <el-table-column prop="user_account" label="账 号" width="150"></el-table-column>
-            <el-table-column prop="user_detail" label="渠道名称"></el-table-column>
+            <el-table-column prop="user_region" label="渠道名称"></el-table-column>
             <el-table-column prop="user_phone" label="联系电话" width="130"></el-table-column>
             <el-table-column prop="user_status" label="冻结状态" width="120">
                 <template slot-scope="scope">
@@ -74,23 +74,23 @@
                 <el-button type="primary" @click="savePwdChange('formP')" v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="新建子渠道" :visible.sync="dialogFormVisible" class="digcont">
+        <el-dialog title="新建子渠道" :visible.sync="showDialogCreateUser" class="digcont">
             <el-form :model="form" :rules="rules" ref="form">
                 <el-form-item label="账号" prop="user_account" :label-width="formLabelWidth">
                     <el-input v-model="form.user_account" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
-                    <el-input v-model="form.password" type="password" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="form.user_password" type="password" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="渠道名称" prop="name" :label-width="formLabelWidth">
-                    <el-input v-model="form.name" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="form.user_region" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="联系电话" prop="tel" :label-width="formLabelWidth">
-                    <el-input v-model="form.tel" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="form.user_phone" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" :label-width="formLabelWidth">
                     <el-select size="small" style="width: 110px"
-                               v-model="form.selectProv"
+                               v-model="form.user_prov"
                                placeholder="请选择省份"
                                v-on:change="getProv($event)">
                         <el-option
@@ -102,7 +102,7 @@
                     </el-select>
                     <el-select size="small" style="width: 104px"
                                v-if="form.selectProv!=''"
-                               v-model="form.selectCity"
+                               v-model="form.user_city"
                                placeholder="请选择城市"
                                v-on:change="getCity($event)">
                         <el-option
@@ -114,11 +114,11 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="" :label-width="formLabelWidth">
-                    <el-input v-model="form.addr" class="diainp2" auto-complete="off" placeholder="请输入详细地址"></el-input>
+                    <el-input v-model="form.user_detail" class="diainp2" auto-complete="off" placeholder="请输入详细地址"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="showDialogCreateUser = false">取 消</el-button>
                 <el-button type="primary" @click="saveCreate('form')">创 建</el-button>
             </div>
         </el-dialog>
@@ -132,26 +132,21 @@
     export default {
         data: function() {
             return {
+                user_type:1,  //0:管理员, 1:用户
+                user_account:'',
                 uploadUrl:global_.baseUrl+'/device/import/excel',
                 radio3:'all',
-                isSuper:localStorage.getItem('userMsg'),
                 loading2:false,
-                dialogFormVisible: false,
+                loading:false,
+                showDialogCreateUser: false,
                 form: {
                     user_account:'',
                     user_password:'',
-                    name: '',
-                    tel:'',
-                    selectProv: '',
-                    selectCity: '',
-                    addr:'',
-                    region: '',
-                    date1: '',
-                    date2: '',
-                    delivery: false,
-                    type: [],
-                    resource: '',
-                    desc: ''
+                    user_region: '',
+                    user_phone:'',
+                    user_prov: '',
+                    user_city: '',
+                    user_detail:'',
                 },
                 rules: {
                     user_account:[
@@ -164,12 +159,12 @@
                         {min:3,max:32,message:'长度在3到32个字符',trigger:'blur'},
                         {validator:this.validatePwd,trigger:'blur'}
                     ],
-                    name:[
+                    user_region:[
                         {required: true, message: '请输入渠道名称', trigger: 'blur'},
                         {validator:this.validateSpace,trigger:'blur'},
                         {validator:this.validateSpace,trigger:'blur'}
                     ],
-                    tel:[
+                    user_phone:[
                         {required: true, message: '请输入联系电话', trigger: 'blur'},
                         {validator:this.validateTel,trigger:'blur'}
                     ]
@@ -186,7 +181,6 @@
                 textarea_macs:'',
 
                 userData:[],
-                loading:false,
                 pageTotal:0,
                 currentPage:1,
                 emptyMsg:'暂无数据',
@@ -220,7 +214,9 @@
             }
         },
         created: function(){
-            if(this.isSuper == '1'){//普通管理员
+            this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            this.user_account = localStorage.getItem('user_account');  //管理员或用户
+            if(this.user_type == '1'){//普通管理员
                 // window.location.reload();
                 console.log('普通管理员');
                 this.$router.push('/basecharts')
@@ -362,9 +358,12 @@
                     let params = {
                         user_account:self.form.user_account,
                         user_password:self.form.user_password,
-                        user_detail:self.form.name,
-                        user_phone:self.form.tel,
-                        user_city:self.form.selectProv+self.form.selectCity+self.form.addr
+                        user_phone:self.form.user_phone,
+                        user_region:self.form.user_region,
+
+                        user_prov:self.form.user_prov,
+                        user_city:self.form.user_city,
+                        user_detail:self.form.user_detail
                     };
                     self.$axios.post( 'api/admin/register',params).then(function(res){
                         if(res.data.ret_code == '1001'){
@@ -377,16 +376,16 @@
                             self.$message('注册成功！');
                             self.form.user_account = '';
                             self.form.user_password = '';
-                            self.form.name = '';
-                            self.form.tel = '';
-                            self.form.selectProv = '';
-                            self.form.selectCity = '';
-                            self.form.addr = '';
+                            self.form.user_phone = '';
+                            self.form.user_region = '';
+                            self.form.user_prov = '';
+                            self.form.user_city = '';
+                            self.form.user_detail = '';
                             self.radio3 = 'all';
-                            self.dialogFormVisible = false;
+                            self.showDialogCreateUser = false;
                             self.getUsers({},'all');
                         }else{
-                            self.$message(res.data.extra);
+                            self.$message(res.data.ret_msg);
                         }
                     })
 
