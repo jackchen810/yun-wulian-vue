@@ -102,9 +102,8 @@
                 self.loading = true;
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
-                    let devunit_name = self.system_setup_list[0].devunit_name;
-                    console.log('extra:', res.data);
-                    console.log('devunit_name:', devunit_name);
+                    console.log('get real data, params:', params);
+                    console.log('get real data, extra:', res.data.extra);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;

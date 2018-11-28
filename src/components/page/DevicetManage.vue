@@ -24,12 +24,6 @@
                     <span v-else>{{ scope.row.devunit_name }}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="channel_name" label="通道字段" width="100">
-                <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.channel_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
-                    <span v-else>{{ scope.row.channel_name }}</span>
-                </template>
-            </el-table-column>
             <el-table-column prop="project_name" label="所属项目" width="160">
                 <template slot-scope="scope" >
                     <el-select size="small" v-model="form.project_name" placeholder="请选择设备所属项目" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property">
@@ -98,6 +92,12 @@
                         <el-radio label="物通博联"></el-radio>
                     </el-radio-group>
                 </el-form-item>
+                <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
+                    <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
+                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
                 <el-form-item label="设备所属项目" prop="project_name" :label-width="formLabelWidth">
                     <el-select v-model="form.project_name" placeholder="请选择设备所属项目">
                         <el-option
@@ -107,15 +107,6 @@
                                 :value="item">
                         </el-option>
                     </el-select>
-                </el-form-item>
-                <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
-                    <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="数据库通道字段" prop=channel_name :label-width="formLabelWidth" v-if="form.gateway_vendor=='爱德佳创'">
-                    <el-input v-model="form.channel_name" class="diainp" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
-                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注说明" prop="comment" :label-width="formLabelWidth">
                     <el-input v-model="form.comment" class="diainp" auto-complete="off"></el-input>
@@ -157,9 +148,6 @@
                 rules: {
                     devunit_name:[
                         {required: true, message: '请输入数据库设备字段', trigger: 'blur'}
-                    ],
-                    channel_name:[
-                        {required: true, message: '请输入数据库通道字段', trigger: 'blur'}
                     ],
                     device_name:[
                         {required: true, message: '请输入设备名称', trigger: 'blur'}
