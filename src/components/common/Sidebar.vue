@@ -80,7 +80,7 @@
 
                 //加载各个项目
                 for(let i = 0; i < self.prjOwnerList.length; i++) {
-                    console.log('prjOwnerList:', self.prjOwnerList[i]);
+                    console.log('[sidebar] prjOwnerList:', self.prjOwnerList[i]);
                     let project_name = self.prjOwnerList[i]['project_name'];
                     let project_local = self.prjOwnerList[i]['project_local'];
                     let params = {
@@ -95,7 +95,7 @@
                                 subs:[],
                             };
 
-                            console.log('prjitem:', prjitem);
+                            console.log('[sidebar] prjitem:', prjitem);
                             for(let i = 0; i < res.data.total; i++) {
                                 let dev_manage = res.data.extra[i];
                                 //let project_name = project_name;
@@ -113,7 +113,7 @@
                             }
                             //
                             self.items.push(prjitem);
-                            console.log('prjitem:', prjitem);
+                            console.log('[sidebar] prjitem:', prjitem);
                         }
                     })
                 }

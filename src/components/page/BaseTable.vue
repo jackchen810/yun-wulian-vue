@@ -79,7 +79,7 @@
         },
         watch: {
             '$route' (to, from) {
-                console.log('路由参数变化，刷新数据', this.$route.path);
+                console.log('[basetable] 路由参数变化，刷新数据', this.$route.path);
 
                 if (typeof(this.$route.query.device_name) != "undefined") {
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
@@ -102,8 +102,8 @@
                 self.loading = true;
                 self.$axios.post('/api/gateway/real/data', params).then(function(res){
                     self.loading = false;
-                    console.log('get real data, params:', params);
-                    console.log('get real data, extra:', res.data.extra);
+                    console.log('[basetable] get real data, params:', params);
+                    console.log('[basetable] get real data, return:', res.data);
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
@@ -138,11 +138,11 @@
                 this.$router.push({name: '/charts', params :params});
             },
             page_forward_module_status() {
-                console.log('page_forward_module_status!');
+                console.log('[basetable] page_forward_module_status!');
                 let params = {
                     devunit_name: this.system_setup_list[0].devunit_name,
                 };
-                console.log('push params:', params);
+                console.log('[basetable] push params:', params);
                 this.$router.push({name: '/devicemodule', params :params});
             }
         },

@@ -8,19 +8,19 @@
         </div>
         <div class="handle-box rad-group" v-if="isShow">
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
-            <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogBtn">保存修改</el-button>
+            <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogSaveBtn">保存修改</el-button>
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading"  @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="300">
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.device_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <el-input size="small" v-model="scope.row.device_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.device_name }}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="devunit_name" label="设备字段" width="100">
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.devunit_name }}</span>
                 </template>
             </el-table-column>
@@ -39,7 +39,7 @@
             </el-table-column>
             <el-table-column prop="gateway_vendor" label="网关厂商" width="120">
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.gateway_vendor" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <el-input size="small" v-model="scope.row.gateway_vendor" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.gateway_vendor }}</span>
                 </template>
             </el-table-column>
@@ -47,7 +47,7 @@
             <el-table-column prop="device_image" label="设备图片" width="450"></el-table-column>
             <el-table-column prop="comment" label="备注说明"><
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.comment" @change="handleEdit(scope.$index, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <el-input size="small" v-model="scope.row.comment" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.comment }}</span>
                 </template>
             </el-table-column>
@@ -136,7 +136,7 @@
                 editColumnKey:'-1',
                 radio3:'全部',
                 form: {
-                    gateway_vendor:'爱德佳创',
+                    gateway_vendor:'',
                     devunit_name:'',
                     file_name:'',
                     device_name:'',
@@ -160,9 +160,8 @@
                 fileList: [],
                 loading:false,
                 listData:[],
+                listDataUpdate:[],
                 prjOwnerList:[],
-                //deviceFieldList:[],
-                //channelFieldList:[],
 
                 pageTotal:1,
                 currentPage:1,
@@ -187,9 +186,11 @@
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.slice(0, page_size);
+                        self.listDataUpdate = [];
                         self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
+                        self.listDataUpdate = [];
                         self.$message.error(res.data.ret_msg);
                     }
                 })
@@ -216,6 +217,37 @@
                 self.form.device_name = '';
                 this.dialogFormVisible=true;
             },
+            clickDialogSaveBtn: function(){
+                var self = this;
+                var params = {
+                    list_data:this.listDataUpdate
+                };
+                self.loading = true;
+                self.$axios.post('api/device/manage/update', params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        //self.$message({message:'修改成功',type:'success'});
+                        self.$alert('保存成功，刷新页面', '标题', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                history.go(0);//刷新页面
+                            }
+                        });
+                        //self.getDeviceList(self.currentPage, self.page_size);
+                        self.listDataUpdate = [];
+                        self.editRowId = '-1';
+                        self.editColumnKey = '-1';
+                    }else{
+                        self.$message.error(res.data.ret_msg)
+                    }
+
+                },function(err){
+                    self.$message.error('修改失败');
+                    self.loading = false;
+                    console.log(err);
+                });
+
+            },
             delDevice: function(id,fileName,i){//删除
                 var self = this;
                 var params = {
@@ -240,24 +272,24 @@
                 })
             },
             submitUpload: function(formName){
-                console.log("submitUpload", formName);
+                console.log("[devicemanage] submitUpload", formName);
                 var self = this;
                 self.$refs[formName].validate(function(valid){
                     if(valid){
                         self.$refs.upload.submit();
                     }else{
                         return false;
-                        console.log('验证失败');
+                        console.log('[devicemanage] :验证失败');
                     }
                 });
             },
             beforeUpload: function(file){
-                console.log("beforeUpload", file.name);
+                console.log("[devicemanage] beforeUpload", file.name);
                 //this.form.file_name = file.name;
                 return true;
             },
             handleSuccess: function(response,file,fileList){
-                console.log("handleSuccess", file.name);
+                console.log("[devicemanage] handleSuccess", file.name);
                 var self = this;
                 if(response.ret_code == 0){
                     this.$message({message:'创建成功',type:'success'});
@@ -275,28 +307,47 @@
                 self.getDeviceList(self.currentPage, self.page_size);
             },
             handleError: function(err,file,fileList){
-                console.log("handleError", file.name);
+                console.log("[devicemanage] handleError:", file.name);
                 this.$message('操作失败');
                 this.$refs.upload.clearFiles();
             },
             handleChange:function(file, fileList) {
-                console.log("handleChange", file.name);
+                console.log("[devicemanage] handleChange:", file.name);
 
                 var reader=new FileReader();
                 reader.onload=function(f){ };
                 //reader.readAsBinaryString(fileList[0]);
                 reader.readAsBinaryString(file.raw);
             },
-            handleEdit(index, row) {
-                console.log('handleEdit', index, row);
+            handleEdit(key, row_data) {
+                console.log('[devicemanage] handleEdit:', row_data['_id'], key, row_data[key]);
+
+                //console.log('this.listDataUpdate:', this.listDataUpdate);
+                for (var i = 0; i< this.listDataUpdate.length; i++){
+                    if (this.listDataUpdate[i]['_id'] == row_data['_id']){
+                        this.listDataUpdate[i][key] = row_data[key];
+                        console.log('listDataUpdate[i]:', this.listDataUpdate[i]);
+                        break;
+                    }
+                }
+
+                //没有找到
+                if (i >= this.listDataUpdate.length){
+                    var updateObj = {};
+                    updateObj['_id'] = row_data['_id'];
+                    updateObj[key] = row_data[key];
+                    this.listDataUpdate.push(updateObj);
+                    console.log('new obj:', updateObj);
+                }
+                //self.listDataUpdate.push();
             },
             handleCellDbClick(row, column) {
-                console.log('handleCellDbClick', row[column.property], column.property);
+                console.log('[devicemanage] handleCellDbClick:', row[column.property], column.property);
                 this.editRowId = row._id;
                 this.editColumnKey = column.property;
             },
             handleRowClick(row, event, column) {
-                console.log('handleRowClick', row[column.property], column.property);
+                console.log('[devicemanage] handleRowClick', row[column.property], column.property);
                 if (column.property != this.editColumnKey || row._id != this.editRowId) {
                     this.editRowId = '-1';
                     this.editColumnKey = '-1';
