@@ -5,12 +5,12 @@
             <span>模块{{index+1}}</span>
             <div class="bottom">
                 <span>运行状态：</span>
-                <el-button type="text" v-if="subitem=='1.000'" >运行</el-button>
+                <el-button type="text" v-if="parseInt(subitem)==1" >运行</el-button>
                 <div class="red_box" v-else>停止</div>
             </div>
             <div class="bottom">
                 <span>告警信息：</span>
-                <div class="green_box" v-if="listAlarm[index]=='0.000'" >无</div>
+                <div class="green_box" v-if="parseInt(listAlarm[index])==0" >无</div>
                 <div class="red_box" v-else>故障</div>
             </div>
         </div>
