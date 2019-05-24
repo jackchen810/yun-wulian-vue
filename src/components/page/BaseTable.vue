@@ -16,6 +16,7 @@
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
         </el-table>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_status">查看模块状态</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="showDialogExport = true">导出数据记录</el-button>
         <h4 class="title_box">详细数据:</h4>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
@@ -35,6 +36,25 @@
                 :total="pageTotal">
             </el-pagination>
         </div>
+        <el-dialog title="选择日期" :visible.sync="showDialogExport" class="digcont">
+            <div class="block">
+                <span class="demonstration">请选择导出范围：</span>
+                <el-date-picker
+                    v-model="data_range"
+                    type="daterange"
+                    align="right"
+                    unlink-panels
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :picker-options="pickerOptions2">
+                </el-date-picker>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showDialogExport = false">取 消</el-button>
+                <el-button @click="exportData(data_range)">导 出</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -48,6 +68,8 @@
                 formLabelWidth: '120px',
                 loading:false,
                 fullscreenLoading: false,
+                showDialogExport: false,
+
 
                 updateTimer: '',
 
@@ -63,7 +85,45 @@
 
                 pageTotal:1,
                 currentPage:1,
-                page_size:10
+                page_size:10,
+
+
+                data_range: '',
+                pickerOptions2: {
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一年',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
 
             }
         },
@@ -92,6 +152,7 @@
             }
         },
         methods: {
+
             getData: function(current_page, page_size){//获取rom列表
                 let self = this;
                 let params = {
@@ -119,6 +180,40 @@
                         history.go(0);//可以换成上一篇博客的任何一种方法。
                     },60000);
                 });
+            },
+            exportData: function(data_range){
+                let self = this;
+                let params = {
+                    data_range: data_range,
+                    devunit_name: self.system_setup_list[0].devunit_name ,
+                };
+
+                console.log('[basetable] range:', data_range);
+
+
+                self.loading  = true;
+                //self.$axios.post('/api/gateway/real/data', params).then(function(res){
+                self.$axios.post('/api/device/manage/export/history', params).then(function(res){
+                    if(res.data.ret_code == 0){
+                        const aLink = document.createElement('a');
+                        const evt = document.createEvent('MouseEvents');
+                        // var evt = document.createEvent("HTMLEvents")
+                        evt.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                        var str = res.data.extra;
+                        var index = str.lastIndexOf("\/");
+                        str  = str .substring(index + 1, str .length);
+                        aLink.download = str;
+                        aLink.href = res.data.extra;
+                        aLink.dispatchEvent(evt);
+                        self.$message({message:'导出成功',type:'success'})
+                    }else{
+                        self.$message.error(res.data.extra);
+                    }
+                },function(err){
+                    self.loading  = false;
+                    self.$message.error(err);
+                })
+                //*/
             },
             handleCurrentChange:function(val){
                 this.currentPage = val;
