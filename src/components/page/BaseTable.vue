@@ -178,9 +178,6 @@
                     self.loading = false;
                     if (res.data.ret_code == 0 && res.data.extra.length > 0) {
                         self.system_setup_list[0].project_local = res.data.extra[0].project_local;
-                        //self.pageTotal = res.data.total;
-                    } else {
-                        self.$message.error(res.data.ret_msg);
                     }
                 })
             },
