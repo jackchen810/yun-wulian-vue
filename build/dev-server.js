@@ -65,11 +65,11 @@ app.use(staticPath, express.static('./static'))
 var uri = 'http://localhost:' + port
 
 devMiddleware.waitUntilValid(function () {
-    console.log('> Listening at ���ص��Խӿڣ�' + uri + '\n');
-    console.log('> ���ص��ԣ��û�����admin ���룺123456\n');
-    console.log('> ���ص���ע�⣺yun-wulian�������\n');
-    console.log('> ���ص��Ա�������¼�û��������ں��yun-wulian�г�ʼ�����ݿ�\n');
-    console.log('> ���ص��Ա��������ص�������8110�˿ڣ�������������Ҫ�����ҵ�yun-wulian���80�˿���\n');
+    console.log('> Listening at 本地调试接口：' + uri + '\n');
+    console.log('> 本地调试，用户名：admin 密码：123456\n');
+    console.log('> 本地调试注意：yun-wulian后端启动\n');
+    console.log('> 本地调试备忘：登录用户名密码在后端yun-wulian中初始到数据库\n');
+    console.log('> 本地调试备忘：本地调试试验8110端口；服务器运行需要编译后挂到yun-wulian后端80端口下\n');
 });
 
 module.exports = app.listen(port, function (err) {

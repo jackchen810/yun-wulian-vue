@@ -426,8 +426,8 @@
                     if(valid){
                         console.log('验证成功')
                     }else{
-                        return false;
                         console.log('验证失败');
+                        return false;
                     }
                     let params = {
                         user_account:self.form.user_account,
