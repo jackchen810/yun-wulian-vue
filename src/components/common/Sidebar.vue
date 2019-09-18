@@ -40,7 +40,7 @@
                     {
                         icon: 'el-icon-star-on',
                         index: 'accountmanage',
-                        title: '渠道管理',
+                        title: '账号管理',
                     },
                     {
                         icon: 'el-icon-setting',
@@ -59,7 +59,7 @@
                     },
                 ]
             }
-            this.loadProjectSidebar({});
+            this.loadProjectSidebar();
         },
         computed:{
             onRoutes(){
@@ -68,10 +68,16 @@
             }
         },
         methods:{
-            loadProjectSidebar: async function (params){//获取项目列表
+            loadProjectSidebar: async function (){//获取项目列表
                 let self = this;
+                //await self.$axios.post('/api/project/manage/list',params).then(function(res){
+                let params = {
+                    user_account:self.user_account
+                };
+
+                //获取用户所属的项目列表
                 self.loading = true;
-                await self.$axios.post('/api/project/manage/list',params).then(function(res){
+                await self.$axios.post('api/admin/get/own/project', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.prjOwnerList = res.data.extra;
@@ -81,8 +87,9 @@
                 //加载各个项目
                 for(let i = 0; i < self.prjOwnerList.length; i++) {
                     console.log('[sidebar] prjOwnerList:', self.prjOwnerList[i]);
-                    let project_name = self.prjOwnerList[i]['project_name'];
-                    let project_local = self.prjOwnerList[i]['project_local'];
+                    //let project_name = self.prjOwnerList[i]['project_name'];
+                    //let project_local = self.prjOwnerList[i]['project_local'];
+                    let project_name = self.prjOwnerList[i];
                     let params = {
                         filter: {'project_name': project_name},
                     };
@@ -105,8 +112,7 @@
                                 //# 不识别
                                 let display_name = device_name.replace("#","%23");
                                 let subitem = {
-                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +
-                                        '&project_local='+project_local +'&devunit_name=' + devunit_name,
+                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&devunit_name=' + devunit_name,
                                     title: device_name,
                                 };
                                 prjitem.subs.push(subitem);

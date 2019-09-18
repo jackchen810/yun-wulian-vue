@@ -64,6 +64,8 @@
     export default {
         data: function(){
             return {
+                user_type:1,  //0:管理员, 1:用户
+                user_account:'',
                 radio3:'all',
                 formLabelWidth: '120px',
                 loading:false,
@@ -129,13 +131,23 @@
         },
         created: function(){
             //console.log('2222', this.$route.query);
+            this.user_type = localStorage.getItem('user_type');  //管理员或用户
+            this.user_account = localStorage.getItem('user_account');  //管理员或用户
             if (typeof(this.$route.query.device_name) != "undefined") {
                 this.system_setup_list[0].project_name = this.$route.query.project_name;
-                this.system_setup_list[0].project_local = this.$route.query.project_local;
+                this.system_setup_list[0].project_local = '';
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
                 this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
             }
-            this.getData(1, this.page_size);
+            this.getProjectData();
+            this.getDeviceRealData(1, this.page_size);
+        },
+        beforeDestroy:function () {
+            if(this.updateTimer != ''){
+                clearInterval(this.updateTimer);
+                console.log('[basetable] clear timer,' + this.updateTimer);
+                this.updateTimer = '';
+            }
         },
         watch: {
             '$route' (to, from) {
@@ -143,17 +155,36 @@
 
                 if (typeof(this.$route.query.device_name) != "undefined") {
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
-                    this.system_setup_list[0].project_local = this.$route.query.project_local;
+                    this.system_setup_list[0].project_local = '';
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 }
                 //console.log(this.getStatus(this.$route.path))
-                this.getData(1, this.page_size);
+                this.getProjectData();
+                this.getDeviceRealData(1, this.page_size);
             }
         },
         methods: {
 
-            getData: function(current_page, page_size){//获取rom列表
+            getProjectData: function() {//获取rom列表
+                let self = this;
+                let params = {
+                    filter: {
+                        project_name: self.system_setup_list[0].project_name,
+                    }
+                };
+                self.loading = true;
+                self.$axios.post('/api/project/manage/list',params).then(function(res){
+                    self.loading = false;
+                    if (res.data.ret_code == 0 && res.data.extra.length > 0) {
+                        self.system_setup_list[0].project_local = res.data.extra[0].project_local;
+                        //self.pageTotal = res.data.total;
+                    } else {
+                        self.$message.error(res.data.ret_msg);
+                    }
+                })
+            },
+            getDeviceRealData: function(current_page, page_size){//获取rom列表
                 let self = this;
                 let params = {
                     filter: {
@@ -174,11 +205,34 @@
                         self.$message.error(res.data.ret_msg);
                     }
 
-                    self.updateTimer = setTimeout(function(){
+                    //如果timer存在就直接返回
+                    if (self.updateTimer != ''){
+                        console.log('[basetable] timer exist, return');
+                        return;
+                    }
+                    self.updateTimer = setInterval(function(){
+                        //self.updateTimer = setTimeout(function(){
                         //self.getData(self.currentPage, self.page_size);
                         //window.location.reload();
-                        history.go(0);//可以换成上一篇博客的任何一种方法。
+                        //history.go(0);//可以换成上一篇博客的任何一种方法。
+                        let params = {
+                            filter: {
+                                devunit_name: self.system_setup_list[0].devunit_name ,
+                            }
+                        };
+                        self.$axios.post('/api/gateway/real/data', params).then(function(rett) {
+                            //console.log('[basetable timer] get real data, params:', params);
+                            console.log('[basetable timer] get real data, return:', rett.data);
+                            if (rett.data.ret_code == 0) {
+                                self.listData = rett.data.extra.data;
+                                self.system_setup_list[0].update_time = rett.data.extra.update_time;
+                            } else {
+                                self.listData = [];
+                                self.$message.error(rett.data.ret_msg);
+                            }
+                        });
                     },60000);
+                    //当前页面切换后，定时器也可以关掉
                 });
             },
             exportData: function(data_range){
@@ -217,7 +271,7 @@
             },
             handleCurrentChange:function(val){
                 this.currentPage = val;
-                this.getData(this.currentPage, this.page_size);
+                this.getDeviceRealData(this.currentPage, this.page_size);
             },
             filterTag:function(value, row) {
                 return row.comment === value;

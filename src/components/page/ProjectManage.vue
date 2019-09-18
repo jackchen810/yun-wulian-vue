@@ -13,7 +13,6 @@
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
             <el-table-column prop="project_name" label="项目名称" width="240"></el-table-column>
             <el-table-column prop="project_local" label="项目地点" width="120"></el-table-column>
-            <el-table-column prop="user_account" label="项目管理员" width="120"></el-table-column>
             <el-table-column prop="project_status" label="项目状态" width="100"></el-table-column>
             <el-table-column prop="project_image" label="项目图片" width="450"></el-table-column>
             <el-table-column prop="comment" label="备注说明"></el-table-column>
@@ -59,16 +58,6 @@
                 </el-form-item>
                 <el-form-item label="项目地点" prop="project_local" :label-width="formLabelWidth">
                     <el-input v-model="form.project_local" class="diainp" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="项目管理员" prop="user_account" :label-width="formLabelWidth">
-                    <el-select v-model="form.user_account" placeholder="请选择项目管理员">
-                        <el-option
-                            v-for="item in prjOwnerList"
-                            :key="item"
-                            :label="item"
-                            :value="item">
-                        </el-option>
-                    </el-select>
                 </el-form-item>
                 <el-form-item label="备注说明" prop="comment" :label-width="formLabelWidth">
                     <el-input v-model="form.comment" class="diainp" auto-complete="off"></el-input>
@@ -116,7 +105,7 @@
                 loading:false,
                 //fullscreenLoading: false,
                 listData:[],
-                prjOwnerList:[],
+                //prjOwnerList:[],
 
                 pageTotal:1,
                 currentPage:1,
@@ -127,7 +116,7 @@
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             this.getProjectList(this.currentPage, this.page_size);
-            this.getAccount({});
+            //this.getAccount({});
         },
         methods: {
 
@@ -149,6 +138,7 @@
                     }
                 })
             },
+            /*
             getAccount: function(params){//获取项目列表
                 let self = this;
                 self.loading = true;
@@ -162,6 +152,7 @@
                     }
                 })
             },
+            */
             handleCurrentChange:function(val){
                 this.currentPage = val;
                 this.getProjectList(this.currentPage, this.page_size);
@@ -222,8 +213,8 @@
                     if(valid){
                         self.$refs.upload.submit();
                     }else{
-                        return false;
                         console.log('验证失败');
+                        return false;
                     }
                 });
             },

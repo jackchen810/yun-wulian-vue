@@ -2,13 +2,13 @@
     <div class="table" v-loading="loading2">
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-menu"></i> 渠道管理</el-breadcrumb-item>
-                <el-breadcrumb-item>渠道列表</el-breadcrumb-item>
+                <el-breadcrumb-item><i class="el-icon-menu"></i> 账号管理</el-breadcrumb-item>
+                <el-breadcrumb-item>账号列表</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
         <el-form :inline="true" class="handle-box">
             <el-form-item>
-                <el-button type="primary" icon="plus" :disabled="user_type=='0'?false:true" class="handle-del mr10" @click="showDialogCreateUser=true">新建子渠道</el-button>
+                <el-button type="primary" icon="plus" :disabled="user_type=='0'?false:true" class="handle-del mr10" @click="showDialogCreateUser=true">新建账号</el-button>
             </el-form-item>
             <el-form-item label="">
                 <el-input v-model="search_word" placeholder="请输入渠道名称或账号查找" class="handle-input mr10"></el-input>
@@ -26,7 +26,7 @@
         </div>
         <el-table :data="userData" border style="width: 100%" ref="multipleTable" :empty-text="emptyMsg" v-loading="loading">
             <el-table-column prop="user_account" label="账 号" width="150"></el-table-column>
-            <el-table-column prop="user_region" label="渠道名称"></el-table-column>
+            <el-table-column prop="user_region" label="账号归属"></el-table-column>
             <el-table-column prop="user_phone" label="联系电话" width="130"></el-table-column>
             <el-table-column prop="user_status" label="冻结状态" width="120">
                 <template slot-scope="scope">
@@ -42,9 +42,10 @@
             <el-table-column label="操作" width="450">
                 <template slot-scope="scope">
                     <!--<el-button class="btn1" size="small" type="text" @click="resetPwd(scope.row.user_account)">修改密码</el-button>-->
-                    <el-button class="btn1" size="small" type="text" @click="resetPassword(scope.row.user_account)">重置密码</el-button>
+                    <el-button class="btn1" size="small" type="warning" @click="resetPassword(scope.row.user_account)">重置密码</el-button>
                     <el-button class="btn1" size="small" v-if="scope.row.user_status =='0' && scope.row.user_type =='1'" @click="revoke(scope.row.user_account)" :type="scope.row.user_status == '1' ? 'warning' : 'danger'">冻结账户</el-button>
                     <el-button class="btn1" size="small" v-else-if="scope.row.user_status =='1' && scope.row.user_type =='1'" @click="restore(scope.row.user_account)" :type="scope.row.user_status == '1' ? 'warning' : 'danger'">解冻账户</el-button>
+                    <el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="success" @click="getOwnProject(scope.row.user_account)">添加项目</el-button>
                     <el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="success" @click="toEnter(scope.row.user_account)">点击进入</el-button>
                 </template>
             </el-table-column>
@@ -74,23 +75,23 @@
                 <el-button type="primary" @click="savePwdChange('formP')" v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="新建子渠道" :visible.sync="showDialogCreateUser" class="digcont">
-            <el-form :model="form" :rules="rules" ref="form">
+        <el-dialog title="新建账号" :visible.sync="showDialogCreateUser" class="digcont">
+            <el-form :model="formA" :rules="rulesA" ref="formA">
                 <el-form-item label="账号" prop="user_account" :label-width="formLabelWidth">
-                    <el-input v-model="form.user_account" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="formA.user_account" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="password" :label-width="formLabelWidth">
-                    <el-input v-model="form.user_password" type="password" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="formA.user_password" type="password" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="渠道名称" prop="name" :label-width="formLabelWidth">
-                    <el-input v-model="form.user_region" class="diainp" auto-complete="off"></el-input>
+                <el-form-item label="账号归属" prop="name" :label-width="formLabelWidth">
+                    <el-input v-model="formA.user_region" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="联系电话" prop="tel" :label-width="formLabelWidth">
-                    <el-input v-model="form.user_phone" class="diainp" auto-complete="off"></el-input>
+                    <el-input v-model="formA.user_phone" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" :label-width="formLabelWidth">
                     <el-select size="small" style="width: 110px"
-                               v-model="form.user_prov"
+                               v-model="formA.user_prov"
                                placeholder="请选择省份"
                                v-on:change="getProv($event)">
                         <el-option
@@ -101,8 +102,8 @@
                         </el-option>
                     </el-select>
                     <el-select size="small" style="width: 104px"
-                               v-if="form.selectProv!=''"
-                               v-model="form.user_city"
+                               v-if="formA.selectProv!=''"
+                               v-model="formA.user_city"
                                placeholder="请选择城市"
                                v-on:change="getCity($event)">
                         <el-option
@@ -114,7 +115,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="" :label-width="formLabelWidth">
-                    <el-input v-model="form.user_detail" class="diainp2" auto-complete="off" placeholder="请输入详细地址"></el-input>
+                    <el-input v-model="formA.user_detail" class="diainp2" auto-complete="off" placeholder="请输入详细地址"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -122,7 +123,24 @@
                 <el-button type="primary" @click="saveCreate('form')">创 建</el-button>
             </div>
         </el-dialog>
-
+        <el-dialog title="添加项目" :visible.sync="showDialogAddPrj" class="digcont">
+            <el-form :model="formPrj" ref="formPrj" :rules="rulesP">
+                <el-form-item label="">
+                    <el-checkbox-group v-model="formPrj.select_list">
+                        <el-checkbox
+                            v-for="item in projectList"
+                            :key="item"
+                            :name="'type'"
+                            :label="item">
+                        </el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showDialogAddPrj = false">取 消</el-button>
+                <el-button type="primary" @click="updateOwnProject(formPrj)" v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -139,7 +157,7 @@
                 loading2:false,
                 loading:false,
                 showDialogCreateUser: false,
-                form: {
+                formA: {
                     user_account:'',
                     user_password:'',
                     user_region: '',
@@ -148,7 +166,7 @@
                     user_city: '',
                     user_detail:'',
                 },
-                rules: {
+                rulesA: {
                     user_account:[
                         {required: true, message: '请输入账号', trigger: 'blur'},
                         {validator:this.validateSpace,trigger:'blur'}
@@ -172,17 +190,11 @@
                 formLabelWidth: '120px',
                 provs:global_.provs,
                 citys: [],
-                showRouterDialog:false,
-                showDelRouterDialog:false,
-                radiotoRout:'文件上传',
                 fileList:[],
                 search_word:'',
-                activeName2:'1',
-                textarea_macs:'',
 
                 userData:[],
-                pageTotal:0,
-                currentPage:1,
+                projectList:[],
                 emptyMsg:'暂无数据',
                 formP:{
                     user_account:localStorage.getItem('ms_username'),
@@ -202,15 +214,23 @@
                         {validator:this.validateRepwd,trigger:'blur'}
                     ]
                 },
+                formPrj:{
+                    user_account:'',
+                    project_name:'',
+                    select_list:[],
+                },
                 showDialogPwd: false,
+                showDialogAddPrj: false,
                 curAccount:'',
                 curAccount2:'',
-                curAccount3:'',
                 fullscreenLoading: false,
                 formMacfile:{
                     user_name:'',
                     user_name3:''
-                }
+                },
+                pageTotal:1,
+                currentPage:1,
+                page_size:10
             }
         },
         created: function(){
@@ -222,6 +242,7 @@
                 this.$router.push('/basecharts')
             }
             this.getUsers({});
+            this.getProjectList();
         },
         methods: {
             getUsers: function(params, type){//获取渠道列表
@@ -237,6 +258,19 @@
                         self.pageTotal = res.data.total;
                     }else{
                         self.userData = [];
+                    }
+                })
+            },
+            getProjectList: function(){//获取项目列表
+                let self = this;
+                self.loading = true;
+                self.$axios.post('/api/project/manage/array').then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.projectList = res.data.extra;
+                    }else{
+                        self.projectList = [];
+                        self.$message.error(res.data.ret_msg)
                     }
                 })
             },
@@ -341,6 +375,46 @@
                         localStorage.setItem('userMsg','1');
                         window.location.reload();
                         self.$router.push('/basecharts')
+                    }else{
+                        self.$message.error(res.data.extra);
+                    }
+                })
+            },
+            ///获取账号下面归属的项目列表
+            getOwnProject: function(user_account){
+                console.log('[AccountManage] get own project list', user_account);
+                var self = this;
+                self.showDialogAddPrj = true;
+                self.formPrj.user_account = user_account;
+                let params = {
+                    user_account:user_account
+                };
+                self.loading  = true;
+                self.$axios.post('api/admin/get/own/project', params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        console.log('[AccountManage] get result: ' + res.data.extra);
+                        self.formPrj.select_list = res.data.extra;
+                    }else{
+                        self.$message.error(res.data.extra);
+                    }
+                })
+            },
+            updateOwnProject: function(formPrj){
+                var self = this;
+                self.showDialogAddPrj = false;
+                console.log('[AccountManage] update own project list, user_account: ' + formPrj.user_account);
+                console.log('[AccountManage] update own project list, select_list: ' + formPrj.select_list);
+                let params = {
+                    user_account:formPrj.user_account,
+                    user_projects:formPrj.select_list
+                };
+                self.loading  = true;
+                self.$axios.post('api/admin/update/own/project',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.$message({message:res.data.extra,type:'success'});
+                        self.formPrj.select_list = [];
                     }else{
                         self.$message.error(res.data.extra);
                     }
@@ -496,7 +570,6 @@
             },
             toRouter: function(account){
                 var self = this;
-                self.showRouterDialog = true;
                 self.curAccount2 = account;
                 self.formMacfile.user_detail = account;
             },
@@ -608,7 +681,6 @@
             },
             handleSuccess: function(response,file,fileList){
                 if(response.ret_code == '1017'){
-                    this.showRouterDialog = false;
                     var arr = response.extra;
                     var str = '';
                     if(arr.length > 3){
@@ -621,7 +693,6 @@
                 }
                 if(response.ret_code == 0){
                     var self = this;
-                    self.showRouterDialog = false;
                     self.$message({message:'导入成功',type:'success'});
                     if(self.radio3 == 'all'){
                         self.getUsers({page_size:10,current_page:self.currentPage},'all');
@@ -632,7 +703,6 @@
                 }else{
                     this.$message.error(response.extra);
                 }
-                this.showRouterDialog = false;
             },
             handleError: function(response,file,fileList){
                 this.$message.error('操作失败');

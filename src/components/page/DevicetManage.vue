@@ -278,8 +278,8 @@
                     if(valid){
                         self.$refs.upload.submit();
                     }else{
-                        return false;
                         console.log('[devicemanage] :验证失败');
+                        return false;
                     }
                 });
             },
