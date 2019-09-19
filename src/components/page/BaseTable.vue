@@ -76,12 +76,12 @@
                 updateTimer: '',
 
                 system_setup_list:[{
-                    "project_name":"津西钢铁脱销项目",
-                    "project_local":"津西",
-                    "devunit_name":"jinxi_1",
-                    "device_name":"高级氧化1#设备",
-                    "device_run_status":"运行",
-                    "device_link_status":"正常",
+                    "project_name":"",
+                    "project_local":"",
+                    "devunit_name":"",
+                    "device_name":"",
+                    "device_run_status":"",
+                    "device_link_status":"",
                     "update_time":"" }],
                 listData:[],
 
@@ -135,7 +135,7 @@
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             if (typeof(this.$route.query.device_name) != "undefined") {
                 this.system_setup_list[0].project_name = this.$route.query.project_name;
-                this.system_setup_list[0].project_local = '';
+                //this.system_setup_list[0].project_local = '';
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
                 this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
             }
@@ -155,7 +155,7 @@
 
                 if (typeof(this.$route.query.device_name) != "undefined") {
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
-                    this.system_setup_list[0].project_local = '';
+                    //this.system_setup_list[0].project_local = '';
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 }
@@ -245,6 +245,7 @@
                 self.loading  = true;
                 //self.$axios.post('/api/gateway/real/data', params).then(function(res){
                 self.$axios.post('/api/device/manage/export/history', params).then(function(res){
+                    self.loading  = false;
                     if(res.data.ret_code == 0){
                         const aLink = document.createElement('a');
                         const evt = document.createEvent('MouseEvents');
@@ -258,10 +259,9 @@
                         aLink.dispatchEvent(evt);
                         self.$message({message:'导出成功',type:'success'})
                     }else{
-                        self.$message.error(res.data.extra);
+                        self.$message.error(res.data.ret_msg);
                     }
                 },function(err){
-                    self.loading  = false;
                     self.$message.error(err);
                 })
                 //*/

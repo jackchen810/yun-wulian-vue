@@ -26,7 +26,7 @@
         </div>
         <el-table :data="userData" border style="width: 100%" ref="multipleTable" :empty-text="emptyMsg" v-loading="loading">
             <el-table-column prop="user_account" label="账 号" width="150"></el-table-column>
-            <el-table-column prop="user_region" label="账号归属"></el-table-column>
+            <el-table-column prop="user_region" label="公司名称"></el-table-column>
             <el-table-column prop="user_phone" label="联系电话" width="130"></el-table-column>
             <el-table-column prop="user_status" label="冻结状态" width="120">
                 <template slot-scope="scope">
@@ -41,12 +41,13 @@
             <el-table-column prop="user_create_time" label="创建时间" width="150"></el-table-column>
             <el-table-column label="操作" width="450">
                 <template slot-scope="scope">
-                    <!--<el-button class="btn1" size="small" type="text" @click="resetPwd(scope.row.user_account)">修改密码</el-button>-->
-                    <el-button class="btn1" size="small" type="warning" @click="resetPassword(scope.row.user_account)">重置密码</el-button>
+                    <el-button class="btn1" size="small" type="success" @click="modifyPassword(scope.row.user_account, scope.row.user_password)">修改密码</el-button>
+                    <!--<el-button class="btn1" size="small" type="warning" @click="resetPassword(scope.row.user_account)">重置密码</el-button>-->
                     <el-button class="btn1" size="small" v-if="scope.row.user_status =='0' && scope.row.user_type =='1'" @click="revoke(scope.row.user_account)" :type="scope.row.user_status == '1' ? 'warning' : 'danger'">冻结账户</el-button>
-                    <el-button class="btn1" size="small" v-else-if="scope.row.user_status =='1' && scope.row.user_type =='1'" @click="restore(scope.row.user_account)" :type="scope.row.user_status == '1' ? 'warning' : 'danger'">解冻账户</el-button>
+                    <el-button class="btn1" size="small" v-if="scope.row.user_status =='1' && scope.row.user_type =='1'" @click="restore(scope.row.user_account)" :type="scope.row.user_status == '1' ? 'warning' : 'danger'">解冻账户</el-button>
+                    <el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="danger" @click="deleteAccount(scope.row.user_account)">删除账户</el-button>
                     <el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="success" @click="getOwnProject(scope.row.user_account)">添加项目</el-button>
-                    <el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="success" @click="toEnter(scope.row.user_account)">点击进入</el-button>
+                    <!--<el-button class="btn1" size="small" v-if="scope.row.user_type =='1'?true:false" type="success" @click="toEnter(scope.row.user_account)">点击进入</el-button>-->
                 </template>
             </el-table-column>
         </el-table>
@@ -120,7 +121,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="showDialogCreateUser = false">取 消</el-button>
-                <el-button type="primary" @click="saveCreate('form')">创 建</el-button>
+                <el-button type="primary" @click="saveCreate('formA')">创 建</el-button>
             </div>
         </el-dialog>
         <el-dialog title="添加项目" :visible.sync="showDialogAddPrj" class="digcont">
@@ -221,13 +222,7 @@
                 },
                 showDialogPwd: false,
                 showDialogAddPrj: false,
-                curAccount:'',
-                curAccount2:'',
                 fullscreenLoading: false,
-                formMacfile:{
-                    user_name:'',
-                    user_name3:''
-                },
                 pageTotal:1,
                 currentPage:1,
                 page_size:10
@@ -250,7 +245,7 @@
                 self.loading = true;
                 self.$axios.post('api/admin/list', params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '2001'){//权限不足
+                    if(res.data.ret_code == 2001){//权限不足
                         self.emptyMsg = res.data.extra;
                     }
                     if(res.data.ret_code == 0){
@@ -274,9 +269,6 @@
                     }
                 })
             },
-            toCharts: function(account,name){
-                this.$router.push({path:'/indexchart',query:{curAccount:account,curName:name}});
-            },
             changeTab: function(){
                 var self = this;
                 var params = {};
@@ -296,19 +288,19 @@
                 self.loading = true;
                 self.$axios.post('api/admin/revoke',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                    if(res.data.ret_code == 1001){
+                        self.$message({message:res.data.ret_msg, type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
                     }
                     if(res.data.ret_code == 1){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg, type:'warning'});
                     }
                     if(res.data.ret_code == 0){
-                        self.$message({message:res.data.extra,type:'success'});
+                        self.$message({message:res.data.ret_msg, type:'success'});
                         if(self.radio3 == 'all'){
-                            self.getUsers({page_size:10,current_page:self.currentPage},'all');
+                            self.getUsers({page_size:10, current_page:self.currentPage}, 'all');
                         }else{
                             self.getUsers({user_status:self.radio3,page_size:10,current_page:self.currentPage},'status');
                         }
@@ -329,14 +321,14 @@
                 self.loading = true;
                 self.$axios.post('api/admin/restore',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                    if(res.data.ret_code == 1001){
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
                     }
                     if(res.data.ret_code == 0){
-                        self.$message({message:res.data.extra,type:'success'});
+                        self.$message({message:res.data.ret_msg,type:'success'});
                         var param = {};
                         if(self.radio3 == 'all'){
                             self.getUsers({page_size:10,current_page:self.currentPage},'all');
@@ -360,17 +352,17 @@
                 };
                 self.$axios.post('api/admin/switch',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                    if(res.data.ret_code == 1001){
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
                     }
-                    if(res.data.ret_code == '1003'){
+                    if(res.data.ret_code == 1003){
                         self.emptyMsg = res.data.extra;
                     }
                     if(res.data.ret_code == 0){
-                        self.$message({message:res.data.extra,type:'success'});
+                        self.$message({message:res.data.ret_msg,type:'success'});
                         localStorage.setItem('ms_username',user);
                         localStorage.setItem('userMsg','1');
                         window.location.reload();
@@ -381,13 +373,13 @@
                 })
             },
             ///获取账号下面归属的项目列表
-            getOwnProject: function(user_account){
-                console.log('[AccountManage] get own project list', user_account);
+            getOwnProject: function(account){
+                console.log('[AccountManage] get own project list', account);
                 var self = this;
                 self.showDialogAddPrj = true;
-                self.formPrj.user_account = user_account;
+                self.formPrj.user_account = account;
                 let params = {
-                    user_account:user_account
+                    user_account:account
                 };
                 self.loading  = true;
                 self.$axios.post('api/admin/get/own/project', params).then(function(res){
@@ -413,7 +405,7 @@
                 self.$axios.post('api/admin/update/own/project',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.$message({message:res.data.extra,type:'success'});
+                        self.$message({message:res.data.ret_msg,type:'success'});
                         self.formPrj.select_list = [];
                     }else{
                         self.$message.error(res.data.extra);
@@ -430,31 +422,31 @@
                         return false;
                     }
                     let params = {
-                        user_account:self.form.user_account,
-                        user_password:self.form.user_password,
-                        user_phone:self.form.user_phone,
-                        user_region:self.form.user_region,
+                        user_account:self.formA.user_account,
+                        user_password:self.formA.user_password,
+                        user_phone:self.formA.user_phone,
+                        user_region:self.formA.user_region,
 
-                        user_prov:self.form.user_prov,
-                        user_city:self.form.user_city,
-                        user_detail:self.form.user_detail
+                        user_prov:self.formA.user_prov,
+                        user_city:self.formA.user_city,
+                        user_detail:self.formA.user_detail
                     };
                     self.$axios.post( 'api/admin/register',params).then(function(res){
-                        if(res.data.ret_code == '1001'){
-                            self.$message({message:res.data.extra,type:'warning'});
+                        if(res.data.ret_code == 1001){
+                            self.$message({message:res.data.ret_msg,type:'warning'});
                             setTimeout(function(){
                                 self.$router.replace('login');
                             },2000)
                         }
                         if(res.data.ret_code == 0){
                             self.$message('注册成功！');
-                            self.form.user_account = '';
-                            self.form.user_password = '';
-                            self.form.user_phone = '';
-                            self.form.user_region = '';
-                            self.form.user_prov = '';
-                            self.form.user_city = '';
-                            self.form.user_detail = '';
+                            self.formA.user_account = '';
+                            self.formA.user_password = '';
+                            self.formA.user_phone = '';
+                            self.formA.user_region = '';
+                            self.formA.user_prov = '';
+                            self.formA.user_city = '';
+                            self.formA.user_detail = '';
                             self.radio3 = 'all';
                             self.showDialogCreateUser = false;
                             self.getUsers({},'all');
@@ -466,6 +458,32 @@
                 });
 
             },
+            deleteAccount: function(account){
+                let self = this;
+                this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    self.$axios.post( 'api/admin/delete',{user_account: account}).then(function(res){
+                        if(res.data.ret_code == 0){
+                            for (let i=0; i<self.userData.length; i++){
+                                if (self.userData[i].user_account == account){
+                                    self.userData.splice(i,1);
+                                    break;
+                                }
+                            }
+                            self.$message({message:res.data.ret_msg,type:'success'});
+                        }
+                    });
+                }).catch(() => {
+                    self.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+
             search: function(){
                 var self = this;
                 if(self.search_word == ''){
@@ -478,13 +496,13 @@
                 };
                 self.$axios.post('api/admin/query',params).then(function(res){
                     self.loading = false;
-                    if(res.data.ret_code == '1001'){
+                    if(res.data.ret_code == 1001){
                         self.$message({message:res.data.extra,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
                     }
-                    if(res.data.ret_code == '1003'){
+                    if(res.data.ret_code == 1003){
                         self.emptyMsg = res.data.extra;
                     }
                     if(res.data.ret_code == 0){
@@ -501,60 +519,49 @@
                 })
 
             },
-            resetPwd: function(account){
+            modifyPassword: function(account, password){
                 var self = this;
                 self.showDialogPwd = true;
-                self.curAccount = account;
-            },
-            resetPassword:function(account){
-                var self = this;
-                var params = {
-                    user_account:account
+                self.formP.user_account = account;
+                //如果是管理员，更新到对话框的原密码位置，避免对原密码的验证
+                if (self.user_type == 0){
+                    self.formP.user_password = password;
                 }
-                self.loading  = true;
-                self.$axios.post('api/admin/reset',params).then(function(res){
-                    self.loading  = false;
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
-                    if(res.data.ret_code == 0){
-                        self.showDialogPwd = false;
-                        self.$message({message:res.data.extra,type:'success'})
-                    }else{
-                        self.$message.error(res.data.extra);
-                    }
-                },function(err){
-                    self.loading  = false;
-                    self.$message.error(err);
-                })
-
             },
-            savePwdChange: function(formName){
+            savePwdChange: function(formP){
                 var self = this;
-                self.$refs[formName].validate(function(valid){
+                self.$refs[formP].validate(function(valid){
                     if(valid){
                         var params = {
-                            user_account: self.curAccount,
-                            user_password:self.formP.user_password,
+                            user_account: self.formP.user_account,
+                            user_password: self.formP.user_password,
                             user_new_password: self.formP.user_new_password
                         };
+                        console.log('savePwdChange:', params);
                         self.fullscreenLoading  = true;
                         self.$axios.post('api/admin/change',params).then(function(res){
                             self.fullscreenLoading  = false;
-                            if(res.data.ret_code == '1001'){
-                                self.$message({message:res.data.extra,type:'warning'});
+                            if(res.data.ret_code == 1001){
+                                self.$message({message:res.data.ret_msg, type:'warning'});
                                 setTimeout(function(){
                                     self.$router.replace('login');
                                 },2000)
                             }
                             if(res.data.ret_code == 0){
                                 self.showDialogPwd = false;
-                                self.$message({message:res.data.extra,type:'success'})
+                                ///当前页面更新用户列表中默认存放的密码
+                                for (let i=0; i<self.userData.length; i++){
+                                    if (self.userData[i].user_account == self.formP.user_account){
+                                        self.userData[i].user_password = self.formP.user_new_password;
+                                        break;
+                                    }
+                                }
+                                self.formP.user_password = '';
+                                self.formP.user_new_password = '';
+                                self.formP.user_validate_password = '';
+                                self.$message({message:res.data.ret_msg, type:'success'})
                             }else{
-                                self.$message.error(res.data.extra);
+                                self.$message.error(res.data.ret_msg);
                             }
                         },function(err){
                             self.fullscreenLoading  = false;
@@ -565,13 +572,6 @@
                         return false;
                     }
                 })
-
-
-            },
-            toRouter: function(account){
-                var self = this;
-                self.curAccount2 = account;
-                self.formMacfile.user_detail = account;
             },
             validateRepwd: function(rule,value,callback){
                 if(value !== this.formP.user_new_password){
@@ -680,7 +680,7 @@
                 // }
             },
             handleSuccess: function(response,file,fileList){
-                if(response.ret_code == '1017'){
+                if(response.ret_code == 1017){
                     var arr = response.extra;
                     var str = '';
                     if(arr.length > 3){

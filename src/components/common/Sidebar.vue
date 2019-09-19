@@ -70,59 +70,75 @@
         methods:{
             loadProjectSidebar: async function (){//获取项目列表
                 let self = this;
-                //await self.$axios.post('/api/project/manage/list',params).then(function(res){
-                let params = {
-                    user_account:self.user_account
-                };
 
                 //获取用户所属的项目列表
                 self.loading = true;
-                await self.$axios.post('api/admin/get/own/project', params).then(function(res){
+                await self.$axios.post('api/admin/get/own/project', {user_account:self.user_account}).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.prjOwnerList = res.data.extra;
                      }
                 });
 
-                //加载各个项目
-                for(let i = 0; i < self.prjOwnerList.length; i++) {
-                    console.log('[sidebar] prjOwnerList:', self.prjOwnerList[i]);
-                    //let project_name = self.prjOwnerList[i]['project_name'];
-                    //let project_local = self.prjOwnerList[i]['project_local'];
-                    let project_name = self.prjOwnerList[i];
-                    let params = {
-                        filter: {'project_name': project_name},
-                    };
-                    await self.$axios.post('/api/device/manage/list',params).then(function(res){
-                        if(res.data.ret_code == 0){
-                            let prjitem = {
+
+                //console.log('[sidebar] prjOwnerList:', self.prjOwnerList);
+
+                let params = {
+                    filter: {project_name: { $in: self.prjOwnerList}}
+                };
+                await self.$axios.post('/api/device/manage/list',params).then(function(res){
+                    if(res.data.ret_code == 0){
+                        console.log('[sidebar] device list:', res.data.extra);
+                        //加载各个项目,  prjOwnerList存放project_name
+                        for(let i = 0; res.data.extra.length > 0; i++) {
+                            var dev_manage = res.data.extra.shift();
+                            var project_name = dev_manage['project_name'];
+                            //device_name
+                            var device_name = dev_manage['device_name'];
+                            var devunit_name = dev_manage['devunit_name'];
+                            //# 不识别
+                            var display_name = device_name.replace("#","%23");
+
+                            var prjItem = {
                                 icon: 'el-icon-menu',
-                                index: '2'+i,
+                                index: '2'+ i,
                                 title: project_name,
-                                subs:[],
+                                subs:[{
+                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&devunit_name=' + devunit_name,
+                                    title: device_name,
+                                }],
                             };
 
-                            console.log('[sidebar] prjitem:', prjitem);
-                            for(let i = 0; i < res.data.total; i++) {
-                                let dev_manage = res.data.extra[i];
-                                //let project_name = project_name;
-                                //let project_local = project_local;
-                                let device_name = dev_manage['device_name'];
-                                let devunit_name = dev_manage['devunit_name'];
+                            //console.log('[sidebar] device list len:', res.data.extra.length);
+                            //console.log('[sidebar] device project_name:', res.data.extra.length);
+
+                            //获取剩下的菜单信息
+                            for(let m = 0; m < res.data.extra.length; m++) {
+                                if (res.data.extra[m]['project_name'] != project_name){
+                                    continue;
+                                }
+
+                                // 弹出一个对象
+                                dev_manage = res.data.extra.shift();
+
+                                //新的device信息
+                                device_name = dev_manage['device_name'];
+                                devunit_name = dev_manage['devunit_name'];
                                 //# 不识别
-                                let display_name = device_name.replace("#","%23");
+                                display_name = device_name.replace("#","%23");
                                 let subitem = {
                                     index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&devunit_name=' + devunit_name,
                                     title: device_name,
                                 };
-                                prjitem.subs.push(subitem);
+                                prjItem.subs.push(subitem);
                             }
-                            //
-                            self.items.push(prjitem);
-                            console.log('[sidebar] prjitem:', prjitem);
+
+                            //整体加入数组
+                            self.items.push(prjItem);
+                            console.log('[sidebar] prjitem:', prjItem);
                         }
-                    })
-                }
+                    }
+                })
             },
             handleSelect: function(key, keyPath) {
                 //console.log('1113', key, this.current_index);

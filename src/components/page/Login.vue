@@ -72,10 +72,16 @@
                 self.$axios.post('/api/admin/login',params).then(function(res){
                     if(res.data.ret_code == 0){
                         self.$message({message:'登录成功！', type:'success'});
-                        localStorage.setItem('user_type', res.data.extra);
+                        let user_type = res.data.extra;
+                        localStorage.setItem('user_type', user_type);
                         localStorage.setItem('user_account', self.ruleForm.username);
                         //localStorage.setItem('ms_username', self.ruleForm.username);
-                        self.$router.push('/basetable');
+                        if(user_type == 0){
+                            self.$router.push('/accountmanage');
+                        }
+                        else{
+                            self.$router.push('/basetable');
+                        }
                     }else{
                         self.$message(res.data.ret_msg);
                     }
