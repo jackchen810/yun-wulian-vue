@@ -119,7 +119,8 @@
                                 }
 
                                 // 弹出一个对象
-                                dev_manage = res.data.extra.shift();
+                                dev_manage = res.data.extra[m];
+                                res.data.extra.splice(m, 1);   //删除当前元素
 
                                 //新的device信息
                                 device_name = dev_manage['device_name'];
