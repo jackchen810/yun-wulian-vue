@@ -80,8 +80,8 @@
                     "project_local":"",
                     "devunit_name":"",
                     "device_name":"",
-                    "device_run_status":"",
-                    "device_link_status":"",
+                    "device_run_status":"运行",
+                    "device_link_status":"正常",
                     "update_time":"" }],
                 listData:[],
 
@@ -196,9 +196,11 @@
                     if(res.data.ret_code == 0){
                         self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
+                        self.system_setup_list[0].device_run_status = "运行";
                         //self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
+                        self.system_setup_list[0].device_run_status = "停止";
                         self.$message.error(res.data.ret_msg);
                     }
 
@@ -223,8 +225,10 @@
                             if (rett.data.ret_code == 0) {
                                 self.listData = rett.data.extra.data;
                                 self.system_setup_list[0].update_time = rett.data.extra.update_time;
+                                self.system_setup_list[0].device_run_status = "正常";
                             } else {
                                 self.listData = [];
+                                self.system_setup_list[0].device_run_status = "停止";
                                 self.$message.error(rett.data.ret_msg);
                             }
                         });
