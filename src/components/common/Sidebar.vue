@@ -109,18 +109,24 @@
                                 }],
                             };
 
+
+                            //console.log('[sidebar] device list:', res.data.extra);
                             //console.log('[sidebar] device list len:', res.data.extra.length);
-                            //console.log('[sidebar] device project_name:', res.data.extra.length);
+                            //console.log('[sidebar] try find project_name:', project_name);
 
                             //获取剩下的菜单信息
                             for(let m = 0; m < res.data.extra.length; m++) {
                                 if (res.data.extra[m]['project_name'] != project_name){
+                                    //console.log('[sidebar] not found, project_name:', m, res.data.extra[m]['project_name']);
                                     continue;
                                 }
+
+                                //console.log('[sidebar] found, project_name:', m, res.data.extra[m]['project_name']);
 
                                 // 弹出一个对象
                                 dev_manage = res.data.extra[m];
                                 res.data.extra.splice(m, 1);   //删除当前元素
+                                m--;   //当前位置再遍历一次
 
                                 //新的device信息
                                 device_name = dev_manage['device_name'];
@@ -132,11 +138,13 @@
                                     title: device_name,
                                 };
                                 prjItem.subs.push(subitem);
+
+                                console.log('[sidebar] found, index:', m, res.data.extra.length);
                             }
 
                             //整体加入数组
                             self.items.push(prjItem);
-                            console.log('[sidebar] prjitem:', prjItem);
+                            //console.log('[sidebar] prjitem:', prjItem);
                         }
                     }
                 })
