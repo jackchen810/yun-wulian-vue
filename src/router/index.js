@@ -40,6 +40,22 @@ export default new Router({
                     path: '/accountmanage',
                     component: resolve => require(['../components/page/AccountManage.vue'], resolve)
                 },
+                {
+                    path: '/rommanage',
+                    component: resolve => require(['../components/page/RomPkgManage.vue'], resolve)
+                },
+                {
+                    path: '/rommupgrade',
+                    component: resolve => require(['../components/page/PushResult.vue'], resolve)
+                },
+                {
+                    path: '/devtypemanage',
+                    component: resolve => require(['../components/page/DeviceTypeManage.vue'], resolve)
+                },
+                {
+                    path: '/pushresultdetail',
+                    component: resolve => require(['../components/page/PushResultDetail.vue'], resolve)
+                },
             ]
         },
         {

@@ -55,6 +55,18 @@
                                 index: 'devicemanage',
                                 title: '设备管理',
                             },
+                            {
+                                index: 'devtypemanage',
+                                title: '设备型号管理',
+                            },
+                            {
+                                index: 'rommanage',
+                                title: '固件版本管理',
+                            },
+                            {
+                                index: 'rommupgrade',
+                                title: '固件升级管理',
+                            },
                         ]
                     },
                 ]

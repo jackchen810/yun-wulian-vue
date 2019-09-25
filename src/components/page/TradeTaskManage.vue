@@ -281,7 +281,7 @@
                     var filter = {
                         user_account: localStorage.getItem('user_account')
                     };
-                    self.$axios.post('/api/task/stats', {filter: filter}).then(function(res){
+                    self.$axios.post('/api/rom/task/stats', {filter: filter}).then(function(res){
                         if(res.data.ret_code == 0){
                             setupObj.total_count = res.data.extra.total_count;
                             setupObj.running_count = res.data.extra.running_count;
@@ -301,7 +301,7 @@
                     current_page: current_page,
                 };
                 self.loading = true;
-                self.$axios.post('/api/task/list', params).then(function(res){
+                self.$axios.post('/api/rom/task/list', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.task_list = res.data.extra.slice(0, self.page_size);
@@ -410,7 +410,7 @@
                 };
 
                 self.loading = true;
-                self.$axios.post('/api/task/add', params).then(function(res){
+                self.$axios.post('/api/rom/task/add', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message('添加成功');
@@ -435,7 +435,7 @@
                     task_id: task_id
                 };
                 self.loading = true;
-                self.$axios.post('/api/task/del', params).then(function(res){
+                self.$axios.post('/api/rom/task/del', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message('删除成功');
@@ -457,7 +457,7 @@
                     task_id: task_id,
                 };
                 self.loading = true;
-                self.$axios.post('/api/task/start',params).then(function(res){
+                self.$axios.post('/api/rom/task/start',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message('操作成功');
@@ -479,7 +479,7 @@
                     task_id: task_id,
                 };
                 self.loading = true;
-                self.$axios.post('/api/task/stop', params).then(function(res){
+                self.$axios.post('/api/rom/task/stop', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message('操作成功');
