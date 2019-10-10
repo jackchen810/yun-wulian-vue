@@ -110,7 +110,7 @@
         // props:['typeListData'],
         created:function(){
             this.getParams();
-            // this.getFirmwareData({});
+            this.getFirmwareData({});
             this.getTypes();
         },
         components:{

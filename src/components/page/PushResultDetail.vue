@@ -152,7 +152,7 @@
                 self.$axios.post('/api/rom/task/list/detail',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
@@ -167,7 +167,7 @@
                             self.firmwareData = res.data.extra.resultList;
                         }
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
                 },function(err){
                     self.loading = false;

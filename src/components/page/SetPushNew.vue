@@ -599,7 +599,7 @@
                 var self = this;
                 self.$axios.post('/api/rom/list').then(function(res){
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
