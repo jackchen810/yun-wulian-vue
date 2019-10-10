@@ -820,7 +820,7 @@
     .mb40 {margin-bottom: 40px;}
     .tab-cont {padding: 40px; /*border-top:1px solid #dfe6ec;*/}
     .diainp{width:217px;}
-    .diainp2{width:450px;}
+    .diainp2{width:550px;}
     .inp100{width:100px;}
     /*.textarea-mac{height:160px;}*/
     .form-box2{width:750px;}

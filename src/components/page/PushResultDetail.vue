@@ -110,7 +110,7 @@
             const self = this;
             return {
                 curId:'',
-                curRadio:'',
+                curRadio:'firmware',
                 loading:false,
                 radio3:'ROM升级',
                 appsData:[],

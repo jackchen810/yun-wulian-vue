@@ -163,7 +163,7 @@
 //                    console.log(res);
                     self.loading = false;
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
@@ -202,7 +202,7 @@
                 if(response.ret_code == 0){
                     this.$message({message:'创建成功',type:'success'});
                 }else{
-                    this.$message.error(response.extra);
+                    this.$message.error(response.ret_msg);
                 }
                 self.fileList3 = [];
                 self.form.file_name = '';
@@ -256,7 +256,7 @@
                         aLink.dispatchEvent(evt)
 
                     }else{
-                        self.$message.error(res.data.extra);
+                        self.$message.error(res.data.ret_msg);
                     }
                 },function(err){
                     self.$message.error('下载失败');
@@ -304,7 +304,7 @@
                 self.$axios.post('api/rom/del',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
@@ -333,7 +333,7 @@
                 self.$axios.post('api/rom/release',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
@@ -342,7 +342,7 @@
                         self.$message({message:'操作成功',type:'success'});
                         self.getData();
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -360,7 +360,7 @@
                 self.$axios.post('api/rom/revoke',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
+                        self.$message({message:res.data.ret_msg,type:'warning'});
                         setTimeout(function(){
                             self.$router.replace('login');
                         },2000)
@@ -369,7 +369,7 @@
                         self.$message({message:'操作成功',type:'success'});
                         self.getData();
                     }else{
-                        self.$message.error(res.data.extra)
+                        self.$message.error(res.data.ret_msg)
                     }
 
                 },function(err){
@@ -380,7 +380,7 @@
             handleChange:function(file) {
                var self = this;
                 this.form.file_name = file.name;
-                this.form.rom_version = file.name.split('-')[2] || '';
+                //this.form.rom_version = file.name.split('-')[2] || '';
 
                 var reader=new FileReader();
                 reader.onload=function(f){
@@ -390,7 +390,7 @@
                     //console.log('dd:', this.result);
                     var str = md5sum.digest('hex');
                     self.form.md5_value = str;
-                }
+                };
                 //reader.readAsBinaryString(fileList[0]);
                 reader.readAsBinaryString(file.raw);
                 self.form.md5_value = self.form.rom_version ==''?' ': self.form.md5_value;
@@ -414,7 +414,7 @@
     .rad-group{margin-bottom:20px;}
     .handle-input{  width: 300px;  display: inline-block;  }
     .handle-box2{display:inline-block;float:right;}
-    .orange{color:#eb9e05;background-color:none;}
+    .orange{color:#eb9e05;background-color:unset;}
     .btn2{margin-bottom:5px;margin-left:0;}
     .diainp{width:217px;}
     .diainp2{width:400px;}

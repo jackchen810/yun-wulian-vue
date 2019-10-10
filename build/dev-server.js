@@ -70,6 +70,9 @@ devMiddleware.waitUntilValid(function () {
     console.log('> 本地调试注意：yun-wulian后端启动\n');
     console.log('> 本地调试备忘：登录用户名密码在后端yun-wulian中初始到数据库\n');
     console.log('> 本地调试备忘：本地调试试验8110端口；服务器运行需要编译后挂到yun-wulian后端80端口下\n');
+    console.log('> 本地调试备忘：emqtt Web 管理控制台 http://yun.jdwanxiang.com:18083\n');
+    console.log('> 本地调试备忘：emqtt Web 管理控制台 默认用户: admin，密码：public\n');
+
 });
 
 module.exports = app.listen(port, function (err) {
@@ -82,4 +85,4 @@ module.exports = app.listen(port, function (err) {
   if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
     opn(uri)
   }
-})
+});
