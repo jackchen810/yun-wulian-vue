@@ -7,17 +7,6 @@
                     <!--<el-breadcrumb-item>推送结果</el-breadcrumb-item>-->
                 </el-breadcrumb>
             </div>
-            <div style="float:right;">
-                <el-button icon="icon iconfont icon-zhifeiji" type="primary" @click="dialogUpdataVisible=true">升级设备</el-button>
-            </div>
-        </div>
-        <hr style="border:none;border-top:1px solid #efefef;margin-top:10px;margin-bottom:20px;"/>
-        <div class='rad-group'>
-            <el-radio-group v-model="curRadio" @change="changeTab">
-                <el-radio-button label="firmware">ROM升级</el-radio-button>
-                <el-radio-button label="apps">插件升级</el-radio-button>
-                <el-radio-button label="script">脚本推送</el-radio-button>
-            </el-radio-group>
             <el-form :inline="true" class="handle-box2">
                 <el-form-item label="">
                     <el-input v-model="search_word" placeholder="请输入设备MAC"></el-input>
@@ -27,7 +16,17 @@
                 </el-form-item>
             </el-form>
         </div>
-
+        <hr style="border:none;border-top:1px solid #efefef;margin-top:10px;margin-bottom:20px;"/>
+        <div class='rad-group'>
+            <el-radio-group v-model="curRadio" @change="changeTab">
+                <el-radio-button label="firmware">ROM升级</el-radio-button>
+                <el-radio-button label="apps">插件升级</el-radio-button>
+                <el-radio-button label="script">脚本推送</el-radio-button>
+            </el-radio-group>
+            <div style="float:right;">
+                <el-button icon="icon iconfont icon-zhifeiji" type="primary" @click="dialogUpdataVisible=true">升级设备</el-button>
+            </div>
+        </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column prop="request_msg" label="操作" width="120">
                 <template slot-scope="scope">
@@ -80,7 +79,7 @@
 
         <el-dialog title="升级设备" :visible.sync="dialogUpdataVisible" custom-class="diagcontpush">
             <div>
-                <setpushnew v-bind:typeListData="typeListData" v-on:listenAppsEvent="thenPushApps" v-on:listenScriptEvent="thenPushScript" v-on:listenFirmwareEvent="thenPushFirmware"></setpushnew>
+                <setpushnew v-bind:typeListData="typeListData" v-on:listenPushEvent="thenPushEvent"></setpushnew>
             </div>
         </el-dialog>
 
@@ -88,8 +87,8 @@
 </template>
 
 <script>
-    import global_ from 'components/common/Global';
-    import  SetpushNew from 'components/page/SetPushNew';
+    //import global_ from 'components/common/Global';
+    import  pushSub from 'components/page/RomAppsScriptPushSub';
     export default {
         data: function(){
             const self = this;
@@ -110,45 +109,48 @@
         // props:['typeListData'],
         created:function(){
             this.getParams();
-            this.getFirmwareData({});
+            this.getFirmwarePushTaskList({});
             this.getTypes();
         },
         components:{
-            'setpushnew':SetpushNew
+            'setpushnew':pushSub
         },
         methods: {
-            thenPushFirmware:function(data){
+
+            thenPushEvent:function(data){
                 var self = this;
+
+                if (data == "cancle"){
+                    self.dialogUpdataVisible = false;
+                }
+                else if(data == "firmware"){
+                    self.curRadio = 'firmware';
+                    self.getFirmwarePushTaskList({});
+                }
+                else if(data == "apps"){
+                    self.curRadio = 'apps';
+                    self.getAppsPushTaskList({});
+                }
+                else if(data == "script"){
+                    self.curRadio = 'script';
+                    self.getScriptPushTaskList({});
+                }
                 self.dialogUpdataVisible = false;
-                self.curRadio = 'firmware';
-                self.getFirmwareData({});
             },
-            thenPushApps:function(data){
-                var self = this;
-                self.dialogUpdataVisible = false;
-                // console.log(data);
-                self.curRadio = 'apps';
-                self.getAppsData({});
-            },
-            thenPushScript:function(data){
-                var self = this;
-                self.dialogUpdataVisible = false;
-                self.curRadio = 'script';
-                self.getScriptData({});
-            },
+
             getParams: function(){
                 var self = this;
                 self.curRadio = self.$route.query.curRadio || 'firmware';
                 var userName = localStorage.getItem('userMsg')=='0'?'':localStorage.getItem('ms_username');
                 var params = userName==''?{}:{filter:{user_name:userName}};
                 if(self.curRadio == 'firmware'){//rom升级
-                    self.getFirmwareData(params);
+                    self.getFirmwarePushTaskList(params);
                 }
                 if(self.curRadio == 'apps'){//插件升级
-                    self.getAppsData({});
+                    self.getAppsPushTaskList({});
                 }
                 if(self.curRadio == 'script'){//脚本升级
-                    self.getScriptData({});
+                    self.getScriptPushTaskList({});
                 }
             },
             getTypes: function(){//获取设备型号
@@ -165,7 +167,7 @@
                     }
                 })
             },
-            getFirmwareData: function(params){
+            getFirmwarePushTaskList: function(params){
                 var self = this;
                 self.$axios.post('/api/rom/task/list/sysupgrade',params).then(function(res){
                     self.loading = false;
@@ -193,7 +195,7 @@
                     console.log(err);
                 });
             },
-            getAppsData: function(params){
+            getAppsPushTaskList: function(params){
                 var self = this;
                 self.$axios.post('/api/apps/task/apps_result',params).then(function(res){
                     self.loading = false;
@@ -220,7 +222,7 @@
                     console.log(err);
                 });
             },
-            getScriptData: function(params){
+            getScriptPushTaskList: function(params){
                 var self = this;
                 self.$axios.post('/api/apps/task/script_result',params).then(function(res){
                     self.loading = false;
@@ -251,13 +253,13 @@
                 var self = this;
                 self.currentPage = 1;
                 if(self.curRadio == 'firmware'){
-                    self.getFirmwareData({});
+                    self.getFirmwarePushTaskList({});
                 }
                 if(self.curRadio == 'apps'){
-                    self.getAppsData({});
+                    self.getAppsPushTaskList({});
                 }
                 if(self.curRadio == 'script'){
-                    self.getScriptData({});
+                    self.getScriptPushTaskList({});
                 }
             },
             handleCurrentChange:function(val){
@@ -275,13 +277,13 @@
                     }
                 }
                 if(self.curRadio == 'firmware'){
-                    self.getFirmwareData(params);
+                    self.getFirmwarePushTaskList(params);
                 }
                 if(self.curRadio == 'apps'){
-                    self.getAppsData(params);
+                    self.getAppsPushTaskList(params);
                 }
                 if(self.curRadio == 'script'){
-                    self.getScriptData(params);
+                    self.getScriptPushTaskList(params);
                 }
 
             },

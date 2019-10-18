@@ -18,7 +18,7 @@
                     <span v-else>{{ scope.row.device_name }}</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="devunit_name" label="设备字段" width="100">
+            <el-table-column prop="devunit_name" label="设备字段" width="150">
                 <template slot-scope="scope" >
                     <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.devunit_name }}</span>
@@ -44,7 +44,7 @@
                 </template>
             </el-table-column>
             <el-table-column prop="device_status" label="设备状态" width="90"></el-table-column>
-            <el-table-column prop="device_image" label="设备图片" width="450"></el-table-column>
+            <!--<el-table-column prop="device_image" label="设备图片" width="450"></el-table-column>-->
             <el-table-column prop="comment" label="备注说明"><
                 <template slot-scope="scope" >
                     <el-input size="small" v-model="scope.row.comment" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
@@ -68,6 +68,7 @@
 
         <el-dialog title="添加设备" :visible.sync="dialogFormVisible" class="digcont">
             <el-form :model="form" :rules="rules" ref="form">
+                <!--
                 <el-form-item label="上传" :label-width="formLabelWidth">
                     <el-upload
                             class="upload-demo"
@@ -86,17 +87,19 @@
                         <el-button slot="trigger" size="small" type="primary">选取设备图片</el-button>
                     </el-upload>
                 </el-form-item>
+                -->
                 <el-form-item label="网关厂商"  :label-width="formLabelWidth">
                     <el-radio-group v-model="form.gateway_vendor">
                         <el-radio label="爱德佳创"></el-radio>
                         <el-radio label="物通博联"></el-radio>
+                        <el-radio label="金大万翔"></el-radio>
                     </el-radio-group>
-                </el-form-item>
-                <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
-                    <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
                     <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
+                    <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="设备所属项目" prop="project_name" :label-width="formLabelWidth">
                     <el-select v-model="form.project_name" placeholder="请选择设备所属项目">
@@ -114,7 +117,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="submitUpload('form')">添 加</el-button>
+                <el-button type="primary" @click="submitUpload(form)">添 加</el-button>
             </div>
         </el-dialog>
 
@@ -271,23 +274,41 @@
                     console.log(err);
                 })
             },
-            submitUpload: function(formName){
-                console.log("[devicemanage] submitUpload", formName);
+            submitUpload: function(stForm){
+                console.log("[devicemanage] submitUpload", stForm);
                 var self = this;
-                self.$refs[formName].validate(function(valid){
-                    if(valid){
-                        self.$refs.upload.submit();
+                var params = {
+                    gateway_vendor: stForm.gateway_vendor,
+                    devunit_name: stForm.devunit_name,
+                    device_name: stForm.device_name,
+                    devunit_name: stForm.devunit_name,
+                    project_name: stForm.project_name,
+                    comment: stForm.comment,
+                };
+                self.loading = true;
+                self.$axios.post('api/device/manage/add',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.$message({message:'添加成功',type:'success'});
+                        self.dialogFormVisible = false;
+                        // self.getDeviceList({});
+                        //self.listData.splice(i,1);
                     }else{
-                        console.log('[devicemanage] :验证失败');
-                        return false;
+                        self.$message.error(res.data.ret_msg)
                     }
-                });
+
+                },function(err){
+                    self.$message.error('删除失败');
+                    self.loading = false;
+                    console.log(err);
+                })
             },
             beforeUpload: function(file){
                 console.log("[devicemanage] beforeUpload", file.name);
                 //this.form.file_name = file.name;
                 return true;
             },
+            /*
             handleSuccess: function(response,file,fileList){
                 console.log("[devicemanage] handleSuccess", file.name);
                 var self = this;
@@ -319,6 +340,7 @@
                 //reader.readAsBinaryString(fileList[0]);
                 reader.readAsBinaryString(file.raw);
             },
+            */
             handleEdit(key, row_data) {
                 console.log('[devicemanage] handleEdit:', row_data['_id'], key, row_data[key]);
 

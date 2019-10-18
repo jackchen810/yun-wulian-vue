@@ -8,7 +8,7 @@
                             <el-form-item label="选择设备型号" prop="dev_type">
                                 <el-select v-model="form0.dev_type" placeholder="请选择" @change="changeDev">
                                     <el-option v-for="item in typeListData" :key="item" :label="item" :value="item"></el-option>
-                                    <!--<el-option v-for="item in ListData" :key="item.dev_type" :label="item.dev_type" :value="item.dev_type"></el-option>-->
+                                    <!--<el-option v-for="item in romListDataPre" :key="item.dev_type" :label="item.dev_type" :value="item.dev_type"></el-option>-->
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="选择ROM版本" prop="dest_version">
@@ -27,6 +27,7 @@
                             <el-form-item label="输入指定MAC" prop="router_mac">
                                 <el-input type="textarea" v-model="form0.router_mac"  placeholder="以换行符分割" class="diainp2"></el-input>
                                 <!--<el-button type="primary" class="daorubtn" icon="icon iconfont icon-daoru" @click="daoruRom">导入设备</el-button>-->
+                                <!--
                                 <div class="daorubtn">
                                     <el-upload
                                         class="upload-demo daorubtn"
@@ -41,14 +42,15 @@
                                         <el-button slot="trigger"  type="primary" class="daorubtn" icon="icon iconfont icon-daoru">导入设备</el-button>
                                     </el-upload>
                                 </div>
+                                -->
                             </el-form-item>
                             <el-form-item label="升级方式" prop="upgrade_mode" :inline="true">
                                 <el-radio-group v-model="form0.upgrade_mode" @change="changeUpgrade" :inline="true">
                                     <el-radio label="1">实时自动升级</el-radio>
-                                    <el-radio label="2">用户自动升级</el-radio>
+                                    <!--<el-radio label="2">用户自动升级</el-radio>-->
                                     <el-radio label="3">定时自动升级(整点时刻)</el-radio>
                                 </el-radio-group>
-                                <el-select :inline="true" v-if="form0.upgrade_mode=='3'?true:false" v-model="form0.upgrade_time" style="width:70px;" placeholder="0">
+                                <el-select :inline="true" v-if="form0.upgrade_mode=='3'?true:false" v-model="form0.upgrade_time" style="width:100px;" placeholder="0">
                                     <el-option
                                         v-for="item in upgradeTime"
                                         :key="item"
@@ -77,36 +79,22 @@
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="安装插件" name="2">
-
                     <div class="form-box tab-cont form-box2">
                         <el-form :model="form1" :rules="rules1" ref="form1" label-width="150px">
                             <el-form-item label="输入指定MAC" prop="route_mac">
                                 <el-input class="textarea-mac diainp2" type="textarea" v-model="form1.route_mac" placeholder="以换行符分割"></el-input>
-                                <div class="daorubtn">
-                                    <el-upload
-                                        class="upload-demo daorubtn"
-                                        ref="upload"
-                                        name="file_name"
-                                        :action="uploadUrl1"
-                                        :beforeUpload="beforeUpload1"
-                                        :on-change="handleChange1"
-                                        :on-success="handleSuccess1"
-                                        :file-list="fileList1"
-                                        :auto-upload="true">
-                                        <el-button slot="trigger"  type="primary" class="daorubtn" icon="icon iconfont icon-daoru">导入设备</el-button>
-                                    </el-upload>
-                                </div>
                             </el-form-item>
-                            <el-form-item label="选择要安装的插件" prop="pkg_str_name">
-                                <el-select v-model="form1.pkg_str_name" placeholder="请选择" @change="changePlugin">
+                            <el-form-item label="选择要安装的插件" prop="pkg_name">
+                                <el-select v-model="form1.pkg_name" placeholder="请选择" @change="changePlugin">
                                     <el-option
                                         v-for="item in pluginListData"
-                                        :key="item.pkg_str_name"
-                                        :label="item.pkg_str_name"
-                                        :value="item.pkg_str_name">
+                                        :key="item.pkg_name"
+                                        :label="item.pkg_name"
+                                        :value="item.pkg_name">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
+                            <!--
                             <el-form-item label="选择插件的版本" prop="pkg_version">
                                 <el-select v-model="form1.pkg_version" placeholder="请选择">
                                     <el-option
@@ -117,15 +105,16 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
+                            -->
                             <el-form-item label="升级方式" prop="pkg_mode" :inline="true">
                                 <el-radio-group v-model="form1.pkg_mode" @change="changePkgMode" :inline="true">
                                     <el-radio label="1">实时自动升级</el-radio>
-                                    <el-radio label="2">用户自动升级</el-radio>
+                                    <!--<el-radio label="2">用户自动升级</el-radio>-->
                                     <el-radio label="3">定时自动升级(整点时刻)</el-radio>
                                 </el-radio-group>
-                                <el-select :inline="true" v-if="form1.pkg_mode=='3'?true:false" v-model="form1.exec_time" style="width:70px;" placeholder="0">
+                                <el-select :inline="true" v-if="form1.pkg_mode=='3'?true:false" v-model="form1.exec_time" style="width:100px;" placeholder="0">
                                     <el-option
-                                        v-for="item in pkgmodeTime"
+                                        v-for="item in upgradeTime"
                                         :key="item"
                                         :label="item"
                                         :value="item">
@@ -152,6 +141,7 @@
                         <el-form ref="form2" :model="form2" :rules="rules2" label-width="150px">
                             <el-form-item label="输入指定MAC" prop="route_mac">
                                 <el-input class="textarea-mac diainp2" type="textarea" v-model="form2.route_mac" placeholder="以换行符分割"></el-input>
+                                <!--
                                 <div class="daorubtn">
                                     <el-upload
                                         class="upload-demo daorubtn"
@@ -165,6 +155,7 @@
                                         <el-button slot="trigger"  type="primary" class="daorubtn" icon="icon iconfont icon-daoru">导入设备</el-button>
                                     </el-upload>
                                 </div>
+                                -->
                             </el-form-item>
                             <el-form-item label="选择要安装的脚本" prop="script_name">
                                 <el-select v-model="form2.script_name" placeholder="请选择">
@@ -179,12 +170,12 @@
                             <el-form-item label="升级方式" prop="script_mode" :inline="true">
                                 <el-radio-group v-model="form2.script_mode" @change="changeScriptMode" :inline="true">
                                     <el-radio label="1">实时自动升级</el-radio>
-                                    <el-radio label="2">用户自动升级</el-radio>
+                                    <!--<el-radio label="2">用户自动升级</el-radio>-->
                                     <el-radio label="3">定时自动升级(整点时刻)</el-radio>
                                 </el-radio-group>
-                                <el-select :inline="true" v-if="form2.script_mode=='3'?true:false" v-model="form2.exec_time" style="width:70px;" placeholder="0">
+                                <el-select :inline="true" v-if="form2.script_mode=='3'?true:false" v-model="form2.exec_time" style="width:100px;" placeholder="0">
                                     <el-option
-                                        v-for="item in scriptmodeTime"
+                                        v-for="item in upgradeTime"
                                         :key="item"
                                         :label="item"
                                         :value="item">
@@ -224,17 +215,17 @@
                     firmware_file:'',
                     firmware_md5:'',
                     upgrade_mode: '1',
-                    upgrade_time:'0',
+                    upgrade_time:'0:00',
                     reflash:'0',
                     operator_name: '',
                     expired_time:'0',
                     isTime: true
                 },
                 // typeListData:[],
-                ListData:[],
+                romListDataPre:[],
                 romListData:[],
                 isValidTime0:false,
-                upgradeTime:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+                upgradeTime:['0:00','1:00','2:00','3:00','4:00','5:00','6:00','7:00','8:00','9:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'],
                 rules0: {
                     router_mac: [
                         {required: true, message: '请输入指定MAC', trigger: 'blur'},
@@ -265,15 +256,16 @@
 
                 form1: {
                     route_mac: '',
+                    pkg_name: '',
                     pkg_str_name: '',
                     pkg_version: '',
                     pkg_mode: '1',
-                    exec_time:'0',
+                    exec_time:'0:00',
                     expired_time:'0',
                     isTime: true,
                     operator: ''
                 },
-                pkgmodeTime:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+                //pkgmodeTime:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
                 pluginListData:[],
                 pVerlist:[],
                 isValidTime1:false,
@@ -282,7 +274,7 @@
                         {required: true, message: '请输入MAC', trigger: 'blur'},
                         {validator: this.validateMac, trigger: 'blur'}
                     ],
-                    pkg_str_name: [
+                    pkg_name: [
                         {required: true, message: '请选择要安装的插件', trigger: 'change'}
                     ],
                     pkg_version: [
@@ -301,13 +293,13 @@
                     route_mac: '',
                     script_name: '',
                     script_mode: '1',
-                    exec_time:'0',
+                    exec_time:'0:00',
                     expired_time:'0',
                     isTime: true,
                     operator: ''
                 },
                 scriptListData:[],
-                scriptmodeTime:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
+                //scriptmodeTime:[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23],
                 isValidTime2:false,
                 rules2: {
                     route_mac: [
@@ -333,14 +325,14 @@
                 // fullscreenLoading: false,
                 loading:false,
 
-                uploadUrl:'/api/apps/import_mac',
+                //uploadUrl:'/api/apps/import_mac',
                 fileList0:[],
                 fileForm0:{
                     // user_name:''
                 },
-                uploadUrl1:'/api/apps/import_mac',
+                //uploadUrl1:'/api/apps/import_mac',
                 fileList1:[],
-                uploadUrl2:'/api/apps/import_mac',
+                //uploadUrl2:'/api/apps/import_mac',
                 fileList2:[],
             }
         },
@@ -353,14 +345,16 @@
         created:function () {
             // this.getTypes();
             this.getRomList();
+            this.getAppsData();
         },
         methods: {
             onRomSubmit:function (formName) {
                 var self = this;
                 self.$refs[formName].validate(function (valid) {
                     if (valid) {
+                        var mac = self.form0.router_mac;
                         var params = {
-                            route_mac:self.form0.router_mac,
+                            route_mac:(mac.indexOf(':')>=0?mac.replace(/:/g,''):mac).toUpperCase(),
                             operator_name:self.form0.operator_name,
                             dev_type:self.form0.dev_type,
                             dest_version:self.form0.dest_version,
@@ -384,7 +378,7 @@
                             if(res.data.ret_code == 0){
                                 self.$message({message:'推送成功',type:'success'});
                                 // self.$router.push({path:'/pushresult',query:{curRadio:'firmware'}});
-                                self.$emit('listenFirmwareEvent','firmware');
+                                self.$emit('listenPushEvent','firmware');
                             }else{
                                 self.$message.error(res.data.extra);
                             }
@@ -411,28 +405,34 @@
                 var self = this;
                 self.$refs[formName].validate(function (valid) {
                     if (valid) {
+
+                        var resultArr;
+                        var list = self.pluginListData;
+                        for(var i=0;i<list.length;i++){
+                            if(list[i].pkg_name == self.form1.pkg_name){
+                                resultArr = list[i];
+                                break;
+                            }
+                        }
+
+                        var mac = self.form1.router_mac;
                         var params = {
-                            route_mac:self.form1.route_mac,
-                            pkg_str_name: self.form1.pkg_str_name,
-                            pkg_version:self.form1.pkg_version,
+                            route_mac:(mac.indexOf(':')>=0?mac.replace(/:/g,''):mac).toUpperCase(),
+                            pkg_name: self.form1.pkg_name,
+                            pkg_str_name: resultArr.pkg_str_name,
+                            pkg_version: resultArr.pkg_version,
                             pkg_mode: self.form1.pkg_mode,
                             exec_time: self.form1.exec_time,
                             expired_time:self.form1.expired_time,
                             operator:self.form1.operator
                         };
                         self.loading = true;
-                        self.$axios.post('/api/apps/apps',params).then(function (res) {
+                        self.$axios.post('/api/apps/task/install',params).then(function (res) {
                             self.loading = false;
-                            if(res.data.ret_code == '1001'){
-                                self.$message({message:res.data.extra,type:'warning'});
-                                setTimeout(function(){
-                                    self.$router.replace('login');
-                                },2000)
-                            }
                             if(res.data.ret_code == 0){
                                 self.$message({message:res.data.extra,type:'success'});
                                 // self.$router.push({path:'/pushresult',query:{curRadio:'apps'}});
-                                self.$emit('listenAppsEvent','apps');
+                                self.$emit('listenPushEvent','apps');
                             }else{
                                 self.$message.error(res.data.extra)
                             }
@@ -458,8 +458,9 @@
                 var self = this;
                 self.$refs[formName].validate(function (valid) {
                     if (valid) {
+                        var mac = self.form2.router_mac;
                         var params = {
-                            route_mac:self.form2.route_mac,
+                            route_mac:(mac.indexOf(':')>=0?mac.replace(/:/g,''):mac).toUpperCase(),
                             script_name: self.form2.script_name,
                             script_mode: self.form2.script_mode,
                             exec_time: self.form2.exec_time,
@@ -478,7 +479,7 @@
                             if(res.data.ret_code == 0){
                                 self.$message({message:res.data.extra,type:'success'});
                                 // self.$router.push({path:'/pushresult',query:{curRadio:'script'}});
-                                self.$emit('listenScriptEvent','script');
+                                self.$emit('listenPushEvent','script');
                             }else{
                                 self.$message.error(res.data.extra)
                             }
@@ -581,20 +582,7 @@
                 var self = this;
                 self.$refs.upload.submit();
             },
-            getTypes: function(){//获取设备型号
-                var self = this;
-                self.$axios.post('/api/devtype/types').then(function(res){
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
-                    if(res.data.ret_code == 0){
-                        self.typeListData = res.data.extra;
-                    }
-                })
-            },
+
             getRomList: function(){//获取rom版本
                 var self = this;
                 self.$axios.post('/api/rom/list').then(function(res){
@@ -605,70 +593,49 @@
                         },2000)
                     }
                     if(res.data.ret_code == 0){
-                        self.ListData = res.data.extra;
+                        self.romListDataPre = res.data.extra;
                     }
                 })
             },
-            getSysinfo: function () {
+
+            getAppsData: function(params){
                 var self = this;
-                var params = {
-                    user_name:localStorage.getItem('ms_username'),
-                    router_mac: self.splitStr(self.form0.router_mac).join(','),
-                    task_type:self.task_type,
-                    upgrade_type:self.form0.upgrade_type,
-                    expired_time:self.form0.expired_time,
-                    firmware_url: self.filetest
-                };
-                self.$axios({
-                    method: 'get',
-                    headers: {'Content-Type': 'application/json'},
-                    url: '/api/device/sysinfo'
-                }).then(function (response) {
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
-                    console.log(response);
-                }, function (err) {
-                    console.log(err);
-                });
-            },
-            getPkgData: function(){//获取插件列表
-                var self = this;
-                self.$axios.post('/api/apps/list').then(function(res){
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
-                    if(res.data.ret_code == 0){
-                        var result = res.data.extra;
-                        for(var i in result){
-                            self.pluginListData.push({pkg_str_name:result[i]._id.pkg_str_name,pkg_version:result[i]._id.pkg_version});
-                        }
-                    }
-                })
-            },
-            getScriptData: function(){
-                var self = this;
-                self.loading = true;
-                self.$axios.post('/api/script/list').then(function(res){
-                    if(res.data.ret_code == '1001'){
-                        self.$message({message:res.data.extra,type:'warning'});
-                        setTimeout(function(){
-                            self.$router.replace('login');
-                        },2000)
-                    }
+                self.$axios.post('/api/apps/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.scriptListData = res.data.extra;
+                        self.pluginListData = res.data.extra;
                     }else{
                         self.$message.error(res.data.extra)
                     }
-                })
+                },function(err){
+                    self.loading = false;
+                    console.log(err);
+                });
+            },
+            getScriptData: function(params){
+                var self = this;
+                self.$axios.post('/api/script/list',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == '1001'){
+                        self.$message({message:res.data.extra,type:'warning'});
+                        setTimeout(function(){
+                            self.$router.replace('login');
+                        },2000)
+                    }
+                    if(res.data.ret_code == 0){
+                        if(JSON.stringify(params) == '{}'){
+                            self.pageTotal = res.data.extra.length;
+                            self.listData3 = res.data.extra.slice(0,10);
+                        }else{
+                            self.listData3 = res.data.extra;
+                        }
+                    }else{
+                        self.$message.error(res.data.extra)
+                    }
+                },function(err){
+                    self.loading = false;
+                    console.log(err);
+                });
             },
             changeDev: function(){
                 var self = this;
@@ -677,7 +644,7 @@
                 self.form0.firmware_md5 = '';
                 var curdevnum = self.form0.dev_type;
                 var resultArr = [];
-                var list = self.ListData;
+                var list = self.romListDataPre;
                 for(var i=0;i<list.length;i++){
                     if(list[i].dev_type == curdevnum){
                         resultArr.push(list[i])
@@ -695,7 +662,7 @@
                 var self = this;
                 var curromv = self.form0.dest_version;
                 var resultArr = [];
-                var list = self.ListData;
+                var list = self.romListDataPre;
                 for(var i=0;i<list.length;i++){
                     if(list[i].dev_type == self.form0.dev_type && list[i].rom_version == curromv){
                         self.form0.firmware_file = list[i].file_name;
@@ -717,13 +684,13 @@
             handleClick:function (tab,event) {
                 var self = this;
                 if(tab.name == '1'){
-                    self.getRomList();
+                    //self.getRomList();
                 }
                 if(tab.name == '2'){
-                    self.getPkgData({});
+                    //self.getPkgData({});
                 }
                 if(tab.name == '3'){
-                    self.getScriptData();
+                    //self.getScriptData();
                 }
             },
             validateSpace: function (rule, value, callback) {

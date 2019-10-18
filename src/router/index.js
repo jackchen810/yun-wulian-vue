@@ -41,12 +41,12 @@ export default new Router({
                     component: resolve => require(['../components/page/AccountManage.vue'], resolve)
                 },
                 {
-                    path: '/rommanage',
-                    component: resolve => require(['../components/page/RomPkgManage.vue'], resolve)
+                    path: '/RomAppsScriptManage',
+                    component: resolve => require(['../components/page/RomAppsScriptManage.vue'], resolve)
                 },
                 {
-                    path: '/rommupgrade',
-                    component: resolve => require(['../components/page/PushResult.vue'], resolve)
+                    path: '/RomAppsScriptPush',
+                    component: resolve => require(['../components/page/RomAppsScriptPush.vue'], resolve)
                 },
                 {
                     path: '/devtypemanage',
@@ -55,6 +55,10 @@ export default new Router({
                 {
                     path: '/pushresultdetail',
                     component: resolve => require(['../components/page/PushResultDetail.vue'], resolve)
+                },
+                {
+                    path: '/GatewayRemoteCommand',
+                    component: resolve => require(['../components/page/GatewayRemoteCommand.vue'], resolve)
                 },
             ]
         },

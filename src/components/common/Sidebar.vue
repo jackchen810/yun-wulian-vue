@@ -39,33 +39,43 @@
                 this.items = [
                     {
                         icon: 'el-icon-star-on',
-                        index: 'accountmanage',
-                        title: '账号管理',
-                    },
-                    {
-                        icon: 'el-icon-setting',
-                        index: '1',
-                        title: '项目管理',
+                        index: '0',
+                        title: '系统管理',
                         subs: [
+                            {
+                                index: 'accountmanage',
+                                title: '账号管理'
+                            },
                             {
                                 index: 'projectmanage',
                                 title: '项目管理'
                             },
                             {
+                                index: 'devtypemanage',
+                                title: '设备型号管理',
+                            },
+                        ]
+                    },
+                    {
+                        icon: 'el-icon-setting',
+                        index: '1',
+                        title: '系统设备',
+                        subs: [
+                            {
                                 index: 'devicemanage',
                                 title: '设备管理',
                             },
                             {
-                                index: 'devtypemanage',
-                                title: '设备型号管理',
+                                index: 'RomAppsScriptManage',
+                                title: '网关版本及插件',
                             },
                             {
-                                index: 'rommanage',
-                                title: '固件版本管理',
+                                index: 'RomAppsScriptPush',
+                                title: '网关及插件升级',
                             },
                             {
-                                index: 'rommupgrade',
-                                title: '固件升级管理',
+                                index: 'GatewayRemoteCommand',
+                                title: '网关远程执行命令',
                             },
                         ]
                     },
