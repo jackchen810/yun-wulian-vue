@@ -12,10 +12,16 @@
         </div>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading"  @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="300">
+            <el-table-column prop="device_name" label="设备名称" width="240">
                 <template slot-scope="scope" >
                     <el-input size="small" v-model="scope.row.device_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
                     <span v-else>{{ scope.row.device_name }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="gateway_sn" label="设备标识" width="190">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.gateway_sn" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.gateway_sn }}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="devunit_name" label="设备字段" width="150">

@@ -11,6 +11,7 @@
             <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
             <el-table-column prop="project_local" label="装备地点" width="100"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
+            <el-table-column prop="gateway_sn" label="设备标识" width="190"></el-table-column>
             <el-table-column prop="device_run_status" label="设备运行状态" width="120"></el-table-column>
             <el-table-column prop="device_link_status" label="设备链路状态" width="120"></el-table-column>
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
@@ -79,6 +80,7 @@
 
                 system_setup_list:[{
                     "project_name":"",
+                    "gateway_sn":"",
                     "project_local":"",
                     "devunit_id":"",
                     "devunit_name":"",
@@ -142,6 +144,7 @@
                 this.system_setup_list[0].project_name = this.$route.query.project_name;
                 //this.system_setup_list[0].project_local = '';
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
+                this.system_setup_list[0].gateway_sn = this.$route.query.gateway_sn;
                 this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 console.log('[basetable] created时，从url参数中获取信息');
                 //console.log('[basetable] this.$route.query', this.$route.query);
@@ -184,6 +187,7 @@
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
                     //this.system_setup_list[0].project_local = '';
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
+                    this.system_setup_list[0].gateway_sn = this.$route.query.gateway_sn;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                     console.log('[basetable] 路由对象中获取数据');
                 }
@@ -342,7 +346,7 @@
             message_box_wirte_value: function(index, dev_id, var_id, value){
                 let self = this;
                 let params = {
-                    'gw_sn':'WG282LL0720021200176',
+                    'gw_sn':this.system_setup_list[0].gateway_sn,
                     'devunit_name':self.devunit_name,
                     'dev_id':dev_id,
                     'var_id':var_id,

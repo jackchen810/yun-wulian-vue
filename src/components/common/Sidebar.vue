@@ -110,13 +110,15 @@
                 };
                 await self.$axios.post('/api/device/manage/list',params).then(function(res){
                     if(res.data.ret_code == 0){
-                        console.log('[sidebar] device/manage/list :', res.data.extra);
+                        console.log('[sidebar] device/manage/list :', res.data.extra.length);
                         //加载各个项目,  prjOwnerList存放project_name
                         for(let i = 0; res.data.extra.length > 0; i++) {
                             var dev_manage = res.data.extra.shift();
+                            console.log('[sidebar] devlist:', dev_manage);
                             var project_name = dev_manage['project_name'];
                             //device_name
                             var device_name = dev_manage['device_name'];
+                            var gateway_sn = dev_manage['gateway_sn'];
                             var devunit_name = dev_manage['devunit_name'];
                             //# 不识别
                             var display_name = device_name.replace("#","%23");
@@ -126,7 +128,7 @@
                                 index: '2'+ i,
                                 title: project_name,
                                 subs:[{
-                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&devunit_name=' + devunit_name,
+                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
                                     title: device_name,
                                 }],
                             };
@@ -156,10 +158,11 @@
                                 //新的device信息
                                 device_name = dev_manage['device_name'];
                                 devunit_name = dev_manage['devunit_name'];
+                                gateway_sn = dev_manage['gateway_sn'];
                                 //# 不识别
                                 display_name = device_name.replace("#","%23");
                                 let subitem = {
-                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&devunit_name=' + devunit_name,
+                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
                                     title: device_name,
                                 };
                                 prjItem.subs.push(subitem);
