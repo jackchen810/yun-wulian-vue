@@ -98,6 +98,9 @@
                 <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
                     <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
+                <el-form-item label="网关标识" prop=gateway_sn :label-width="formLabelWidth">
+                    <el-input v-model="form.gateway_sn" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
                 <el-form-item label="数据库设备字段" prop=devunit_name :label-width="formLabelWidth">
                     <el-input v-model="form.devunit_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
@@ -139,6 +142,7 @@
                 editColumnKey:'-1',
                 radio3:'全部',
                 form: {
+                    gateway_sn:'',
                     gateway_vendor:'',
                     devunit_name:'',
                     file_name:'',
@@ -149,8 +153,11 @@
                     comment:''
                 },
                 rules: {
+                    gateway_sn:[
+                        {required: true, message: '请输入网关标识', trigger: 'blur'}
+                    ],
                     devunit_name:[
-                        {required: true, message: '请输入数据库设备字段', trigger: 'blur'}
+                        {required: true, message: '请输入数据库中定义的设备字段', trigger: 'blur'}
                     ],
                     device_name:[
                         {required: true, message: '请输入设备名称', trigger: 'blur'}
@@ -278,6 +285,7 @@
                 console.log("[devicemanage] submitUpload", stForm);
                 var self = this;
                 var params = {
+                    gateway_sn: stForm.gateway_sn,
                     gateway_vendor: stForm.gateway_vendor,
                     devunit_name: stForm.devunit_name,
                     device_name: stForm.device_name,

@@ -21,6 +21,7 @@
                                 <el-option label="远程开启SSH内网穿透" value="gw_start_ssh"></el-option>
                                 <el-option label="远程关闭SSH内网穿透（支持广播）" value="gw_stop_ssh"></el-option>
                                 <el-option label="查看设备信息" value="gw_query"></el-option>
+                                <el-option label="远程设备重启" value="gw_reboot"></el-option>
                             </el-select>
                             <el-form-item>
                                 <el-button type="primary" @click="sendCustomCmd('form1')" v-loading.fullscreen.lock="fullscreenLoading">发送</el-button>

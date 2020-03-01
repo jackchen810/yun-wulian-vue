@@ -60,6 +60,11 @@ export default new Router({
                     path: '/GatewayRemoteCommand',
                     component: resolve => require(['../components/page/GatewayRemoteCommand.vue'], resolve)
                 },
+                {
+                    path: '/ShowGatewayConfig',
+                    name: '/ShowGatewayConfig',
+                    component: resolve => require(['../components/page/ShowGatewayConfig.vue'], resolve)
+                },
             ]
         },
         {

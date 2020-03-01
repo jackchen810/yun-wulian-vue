@@ -17,6 +17,7 @@
         </el-table>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_status">查看模块状态</el-button>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="showDialogExport = true">导出数据记录</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_config">查看数据集配置</el-button>
         <h4 class="title_box">详细数据:</h4>
         <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
@@ -24,6 +25,7 @@
             <el-table-column prop="varValue" label="值"></el-table-column>
             <el-table-column label="操作" width="250">
             <template slot-scope="scope">
+                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, system_setup_list[0].devunit_id, scope.row.varId)">写入</el-button>
                 <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.varName, scope.row.varId)">查看历史曲线</el-button>
             </template>
         </el-table-column>
@@ -78,6 +80,7 @@
                 system_setup_list:[{
                     "project_name":"",
                     "project_local":"",
+                    "devunit_id":"",
                     "devunit_name":"",
                     "device_name":"",
                     "device_run_status":"运行",
@@ -131,6 +134,8 @@
         },
         created: function(){
             //console.log('2222', this.$route.query);
+            //this.$route.query 中的参数通过url参数代入，点击侧边栏时带入,Sidebar.vue中定义
+            //url的表现形式(url中带有参数)
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             if (typeof(this.$route.query.device_name) != "undefined") {
@@ -138,6 +143,8 @@
                 //this.system_setup_list[0].project_local = '';
                 this.system_setup_list[0].device_name = this.$route.query.device_name;
                 this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
+                console.log('[basetable] created时，从url参数中获取信息');
+                //console.log('[basetable] this.$route.query', this.$route.query);
             }
             this.getProjectData();
             this.getDeviceRealData(1, this.page_size);
@@ -150,6 +157,26 @@
             }
         },
         watch: {
+            /*
+            * $route对象表示当前的路由信息，包含了当前 URL 解析得到的信息。包含当前的路径，参数，query对象等。
+            * **1.$route.path**
+                   字符串，对应当前路由的路径，总是解析为绝对路径，如 "/foo/bar"。
+            **2.$route.params**
+                   一个 key/value 对象，包含了 动态片段 和 全匹配片段，
+                  如果没有路由参数，就是一个空对象。
+            **3.$route.query**
+                   一个 key/value 对象，表示 URL 查询参数。
+                  例如，对于路径 /foo?user=1，则有 $route.query.user == 1，
+                  如果没有查询参数，则是个空对象。
+            **4.$route.hash**
+                   当前路由的 hash 值 (不带 #) ，如果没有 hash 值，则为空字符串。锚点
+            **5.$route.fullPath**
+                   完成解析后的 URL，包含查询参数和 hash 的完整路径。
+            **6.$route.matched**
+                   数组，包含当前匹配的路径中所包含的所有片段所对应的配置参数对象。
+            **7.$route.name    当前路径名字**
+             **8.$route.meta  路由元信息
+            * */
             '$route' (to, from) {
                 console.log('[basetable] 路由参数变化，刷新数据', this.$route.path);
 
@@ -158,6 +185,7 @@
                     //this.system_setup_list[0].project_local = '';
                     this.system_setup_list[0].device_name = this.$route.query.device_name;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
+                    console.log('[basetable] 路由对象中获取数据');
                 }
                 //console.log(this.getStatus(this.$route.path))
                 this.getProjectData();
@@ -178,6 +206,8 @@
                     self.loading = false;
                     if (res.data.ret_code == 0 && res.data.extra.length > 0) {
                         self.system_setup_list[0].project_local = res.data.extra[0].project_local;
+                        //console.log('[basetable] post /api/project/manage/list ');
+                        //console.log('[basetable] ', self.system_setup_list[0]);
                     }
                 })
             },
@@ -197,6 +227,8 @@
                         self.listData = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
                         self.system_setup_list[0].device_run_status = "运行";
+                        self.system_setup_list[0].devunit_id = res.data.extra.devunit_id;
+                        console.log('[basetable] devunit_id ', res.data.extra.devunit_id);
                         //self.pageTotal = res.data.total;
                     }else{
                         self.listData = [];
@@ -204,7 +236,7 @@
                         self.$message.error(res.data.ret_msg);
                     }
 
-                    //如果timer存在就直接返回
+                    //如果timer存在就直接返回, 这里数据每分钟更新一次
                     if (self.updateTimer != ''){
                         console.log('[basetable] timer exist, return');
                         return;
@@ -226,6 +258,7 @@
                                 self.listData = rett.data.extra.data;
                                 self.system_setup_list[0].update_time = rett.data.extra.update_time;
                                 self.system_setup_list[0].device_run_status = "正常";
+                                self.system_setup_list[0].devunit_id = res.data.extra.devunit_id;
                             } else {
                                 self.listData = [];
                                 self.system_setup_list[0].device_run_status = "停止";
@@ -294,6 +327,62 @@
                 };
                 console.log('[basetable] push params:', params);
                 this.$router.push({name: '/devicemodule', params :params});
+            },
+            //查看网关配置，跳转到网关配置页面
+            page_forward_module_config() {
+                console.log('[basetable] page_forward_module_config!');
+                let params = {
+                    devunit_name: this.system_setup_list[0].devunit_name,
+                };
+                console.log('[basetable] push params:', params);
+                this.$router.push({name: '/ShowGatewayConfig', params :params});
+            },
+
+            //写入数值
+            message_box_wirte_value: function(index, dev_id, var_id, value){
+                let self = this;
+                let params = {
+                    'gw_sn':'WG282LL0720021200176',
+                    'devunit_name':self.devunit_name,
+                    'dev_id':dev_id,
+                    'var_id':var_id,
+                    'value':value
+                };
+                self.loading = true;
+                self.$axios.post('/api/cmd/exec/remote/set',params).then(function(res){
+                    self.loading = false;
+                    if(res.data.ret_code == 0){
+                        self.listData[index]['varValue'] = value;
+                        console.log('self.listData:', self.listData);
+
+                    }else{
+                        self.$message.error(res.data.ret_msg);
+                    }
+                })
+            },
+            message_box_wirte: function(index, dev_id, var_id){
+                console.log('[basetable] message_box_wirte!', index, dev_id, var_id);
+
+                this.$prompt('请输入数值', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern:/^[0-9]*$/,
+                inputErrorMessage: '数值格式不正确'
+                }).then(({ value }) => {
+                    this.$message({
+                        type: 'success',
+                        message: '写入的数值是: ' + value
+                    });
+
+                    //写入数值
+                    this.message_box_wirte_value(index, dev_id, var_id, value);
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });
+                });
             }
         },
         computed:{

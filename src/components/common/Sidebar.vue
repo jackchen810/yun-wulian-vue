@@ -34,7 +34,7 @@
         created: function(){
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
-            console.log("user_type:", this.user_type);
+            console.log("[sidebar] user_type:", this.user_type);
             if(this.user_type == '0'){//普通管理员
                 this.items = [
                     {
@@ -110,7 +110,7 @@
                 };
                 await self.$axios.post('/api/device/manage/list',params).then(function(res){
                     if(res.data.ret_code == 0){
-                        console.log('[sidebar] device list:', res.data.extra);
+                        console.log('[sidebar] device/manage/list :', res.data.extra);
                         //加载各个项目,  prjOwnerList存放project_name
                         for(let i = 0; res.data.extra.length > 0; i++) {
                             var dev_manage = res.data.extra.shift();
@@ -135,6 +135,7 @@
                             //console.log('[sidebar] device list:', res.data.extra);
                             //console.log('[sidebar] device list len:', res.data.extra.length);
                             //console.log('[sidebar] try find project_name:', project_name);
+                            console.log('[sidebar] find dev_manage:', dev_manage);
 
                             //获取剩下的菜单信息
                             for(let m = 0; m < res.data.extra.length; m++) {
@@ -149,6 +150,8 @@
                                 dev_manage = res.data.extra[m];
                                 res.data.extra.splice(m, 1);   //删除当前元素
                                 m--;   //当前位置再遍历一次
+
+                                //console.log('[sidebar] dev_manage:', dev_manage);
 
                                 //新的device信息
                                 device_name = dev_manage['device_name'];
