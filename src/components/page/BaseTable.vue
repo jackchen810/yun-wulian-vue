@@ -26,7 +26,7 @@
             <el-table-column prop="varValue" label="值"></el-table-column>
             <el-table-column label="操作" width="250">
             <template slot-scope="scope">
-                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, system_setup_list[0].devunit_id, scope.row.varId)">写入</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, system_setup_list[0].devunit_id, scope.row.varId, scope.row.varName)">写入</el-button>
                 <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.varName, scope.row.varId)">查看历史曲线</el-button>
             </template>
         </el-table-column>
@@ -343,14 +343,15 @@
             },
 
             //写入数值
-            message_box_wirte_value: function(index, dev_id, var_id, value){
+            message_box_wirte_value: function(index, dev_id, var_id, var_name,value){
                 let self = this;
                 let params = {
                     'gw_sn':this.system_setup_list[0].gateway_sn,
-                    'devunit_name':self.devunit_name,
+                    'devunit_name':this.system_setup_list[0].devunit_name,
                     'dev_id':dev_id,
                     'var_id':var_id,
-                    'value':value
+                    'var_name':var_name,
+                    'var_value':value
                 };
                 self.loading = true;
                 self.$axios.post('/api/cmd/exec/remote/set',params).then(function(res){
@@ -364,8 +365,8 @@
                     }
                 })
             },
-            message_box_wirte: function(index, dev_id, var_id){
-                console.log('[basetable] message_box_wirte!', index, dev_id, var_id);
+            message_box_wirte: function(index, dev_id, var_id, var_name){
+                console.log('[basetable] message_box_wirte!', index, dev_id, var_id, var_name);
 
                 this.$prompt('请输入数值', '提示', {
                     confirmButtonText: '确定',
@@ -379,7 +380,7 @@
                     });
 
                     //写入数值
-                    this.message_box_wirte_value(index, dev_id, var_id, value);
+                    this.message_box_wirte_value(index, dev_id, var_id, var_name, value);
 
                 }).catch(() => {
                     this.$message({
