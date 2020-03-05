@@ -26,13 +26,13 @@
             </el-table-column>
             <el-table-column prop="devunit_name" label="设备字段" width="150">
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <el-input size="small" v-model="scope.row.devunit_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id"></el-input>
                     <span v-else>{{ scope.row.devunit_name }}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="project_name" label="所属项目" width="160">
                 <template slot-scope="scope" >
-                    <el-select size="small" v-model="form.project_name" placeholder="请选择设备所属项目" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property">
+                    <el-select size="small" v-model="scope.row.project_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id">
                         <el-option
                                 v-for="item in prjOwnerList"
                                 :key="item"
