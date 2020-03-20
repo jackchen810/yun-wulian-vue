@@ -1,11 +1,5 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-star-on"></i> 项目信息管理</el-breadcrumb-item>
-                <el-breadcrumb-item>设备管理</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
         <div class="handle-box rad-group" v-if="isShow">
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
             <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogSaveBtn">保存修改</el-button>

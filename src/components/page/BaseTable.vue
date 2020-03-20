@@ -1,13 +1,7 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-star-on"></i> 数据管理</el-breadcrumb-item>
-                <el-breadcrumb-item>数据列表</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <h4>基本信息:</h4>
-        <el-table :data="system_setup_list" style="width: 100%" ref="multileTable">
+        <h2>基本信息:</h2>
+        <el-table :data="abstract_list" style="width: 100%" ref="multileTable">
             <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
             <el-table-column prop="project_local" label="装备地点" width="100"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
@@ -17,16 +11,19 @@
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
         </el-table>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_status">查看模块状态</el-button>
-        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="showDialogExport = true">导出数据记录</el-button>
-        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_config">查看数据集配置</el-button>
-        <h4 class="title_box">详细数据:</h4>
-        <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_alarm_logs">查看告警日志</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="showDialogExport = true">导出数据</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_config">查看网关配置</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_trigger_config">查看触发器配置</el-button>
+        <h2 class="title_box">详细数据:</h2>
+        <el-table :data="varListData" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="varName" label="描述" width="240"></el-table-column>
             <el-table-column prop="varValue" label="值"></el-table-column>
-            <el-table-column label="操作" width="250">
+            <el-table-column label="操作" width="350">
             <template slot-scope="scope">
-                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, system_setup_list[0].devunit_id, scope.row.varId, scope.row.varName)">写入</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, abstract_list[0].devunit_id, scope.row.varId, scope.row.varName)">写入</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="create_trigger(scope.$index, scope.row.varName, scope.row.varValue)">添加触发器</el-button>
                 <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.varName, scope.row.varId)">查看历史曲线</el-button>
             </template>
         </el-table-column>
@@ -58,6 +55,44 @@
                 <el-button @click="exportData(data_range)">导 出</el-button>
             </div>
         </el-dialog>
+
+
+        <el-dialog title="添加触发器" :visible.sync="showDialogTrigger" class="digcont">
+            <el-form :model="triggerForm" :rules="triggerRules" ref="triggerForm">
+                <el-form-item label="设备变量：" prop=varName :label-width="formLabelWidth">
+                    <el-input v-model="triggerForm.varName" class="diainp" auto-complete="off" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="比较符：" prop="if_symbol" :label-width="formLabelWidth">
+                    <el-select v-model="triggerForm.if_symbol" placeholder="请选择比较符">
+                        <el-option
+                                v-for="item in triggerForm.symbolList"
+                                :key="item"
+                                :label="item"
+                                :value="item">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="匹配值：" prop="if_number" :label-width="formLabelWidth">
+                    <el-input v-model="triggerForm.if_number" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="结果匹配输出：" prop="if_true_comment" :label-width="formLabelWidth">
+                    <el-input v-model="triggerForm.if_true_comment" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="结果不匹配输出：" prop="if_false_comment" :label-width="formLabelWidth">
+                    <el-input v-model="triggerForm.if_false_comment" class="diainp" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="结果输出到："  :label-width="formLabelWidth">
+                    <el-radio-group v-model="triggerForm.logs_type">
+                        <el-radio label="告警日志"></el-radio>
+                        <el-radio label="操作日志"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showDialogTrigger = false">取 消</el-button>
+                <el-button type="primary" @click="triggerAdd(triggerForm)">添 加</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -70,15 +105,37 @@
                 user_type:1,  //0:管理员, 1:用户
                 user_account:'',
                 radio3:'all',
-                formLabelWidth: '120px',
+                formLabelWidth: '200px',
                 loading:false,
                 fullscreenLoading: false,
                 showDialogExport: false,
+                showDialogTrigger: false,
 
 
                 updateTimer: '',
 
-                system_setup_list:[{
+
+                triggerForm: {
+                    symbolList:['>','<','=','!='],
+                    varName:'',
+                    varValue:'',
+                    if_symbol:'',
+                    if_number:'',
+                    if_true_comment:'',
+                    if_false_comment:'',
+                    logs_type:'告警日志',
+                },
+                triggerRules: {
+                    if_true_comment:[
+                        {required: true, message: '请输入比较匹配后输出到日志中的内容', trigger: 'blur'}
+                    ],
+                    if_false_comment:[
+                        {required: true, message: '请输入比较不匹配后输出到日志中的内容', trigger: 'blur'}
+                    ],
+                },
+
+
+                abstract_list:[{
                     "project_name":"",
                     "gateway_sn":"",
                     "project_local":"",
@@ -88,7 +145,7 @@
                     "device_run_status":"运行",
                     "device_link_status":"正常",
                     "update_time":"" }],
-                listData:[],
+                varListData:[],
 
                 pageTotal:1,
                 currentPage:1,
@@ -141,11 +198,11 @@
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
             if (typeof(this.$route.query.device_name) != "undefined") {
-                this.system_setup_list[0].project_name = this.$route.query.project_name;
-                //this.system_setup_list[0].project_local = '';
-                this.system_setup_list[0].device_name = this.$route.query.device_name;
-                this.system_setup_list[0].gateway_sn = this.$route.query.gateway_sn;
-                this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
+                this.abstract_list[0].project_name = this.$route.query.project_name;
+                //this.abstract_list[0].project_local = '';
+                this.abstract_list[0].device_name = this.$route.query.device_name;
+                this.abstract_list[0].gateway_sn = this.$route.query.gateway_sn;
+                this.abstract_list[0].devunit_name = this.$route.query.devunit_name;
                 console.log('[basetable] created时，从url参数中获取信息');
                 //console.log('[basetable] this.$route.query', this.$route.query);
             }
@@ -184,11 +241,11 @@
                 console.log('[basetable] 路由参数变化，刷新数据', this.$route.path);
 
                 if (typeof(this.$route.query.device_name) != "undefined") {
-                    this.system_setup_list[0].project_name = this.$route.query.project_name;
-                    //this.system_setup_list[0].project_local = '';
-                    this.system_setup_list[0].device_name = this.$route.query.device_name;
-                    this.system_setup_list[0].gateway_sn = this.$route.query.gateway_sn;
-                    this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
+                    this.abstract_list[0].project_name = this.$route.query.project_name;
+                    //this.abstract_list[0].project_local = '';
+                    this.abstract_list[0].device_name = this.$route.query.device_name;
+                    this.abstract_list[0].gateway_sn = this.$route.query.gateway_sn;
+                    this.abstract_list[0].devunit_name = this.$route.query.devunit_name;
                     console.log('[basetable] 路由对象中获取数据');
                 }
                 //console.log(this.getStatus(this.$route.path))
@@ -202,16 +259,16 @@
                 let self = this;
                 let params = {
                     filter: {
-                        project_name: self.system_setup_list[0].project_name,
+                        project_name: self.abstract_list[0].project_name,
                     }
                 };
                 self.loading = true;
                 self.$axios.post('/api/project/manage/list',params).then(function(res){
                     self.loading = false;
                     if (res.data.ret_code == 0 && res.data.extra.length > 0) {
-                        self.system_setup_list[0].project_local = res.data.extra[0].project_local;
+                        self.abstract_list[0].project_local = res.data.extra[0].project_local;
                         //console.log('[basetable] post /api/project/manage/list ');
-                        //console.log('[basetable] ', self.system_setup_list[0]);
+                        //console.log('[basetable] ', self.abstract_list[0]);
                     }
                 })
             },
@@ -219,7 +276,7 @@
                 let self = this;
                 let params = {
                     filter: {
-                        devunit_name: self.system_setup_list[0].devunit_name ,
+                        devunit_name: self.abstract_list[0].devunit_name ,
                     }
                 };
                 self.loading = true;
@@ -228,15 +285,15 @@
                     console.log('[basetable] get real data, params:', params);
                     console.log('[basetable] get real data, return:', res.data);
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.data;
-                        self.system_setup_list[0].update_time = res.data.extra.update_time;
-                        self.system_setup_list[0].device_run_status = "运行";
-                        self.system_setup_list[0].devunit_id = res.data.extra.devunit_id;
+                        self.varListData = res.data.extra.data;
+                        self.abstract_list[0].update_time = res.data.extra.update_time;
+                        self.abstract_list[0].device_run_status = "运行";
+                        self.abstract_list[0].devunit_id = res.data.extra.devunit_id;
                         console.log('[basetable] devunit_id ', res.data.extra.devunit_id);
                         //self.pageTotal = res.data.total;
                     }else{
-                        self.listData = [];
-                        self.system_setup_list[0].device_run_status = "停止";
+                        self.varListData = [];
+                        self.abstract_list[0].device_run_status = "停止";
                         self.$message.error(res.data.ret_msg);
                     }
 
@@ -252,20 +309,20 @@
                         //history.go(0);//可以换成上一篇博客的任何一种方法。
                         let params = {
                             filter: {
-                                devunit_name: self.system_setup_list[0].devunit_name ,
+                                devunit_name: self.abstract_list[0].devunit_name ,
                             }
                         };
                         self.$axios.post('/api/gateway/real/data', params).then(function(rett) {
                             //console.log('[basetable timer] get real data, params:', params);
                             console.log('[basetable timer] get real data, return:', rett.data);
                             if (rett.data.ret_code == 0) {
-                                self.listData = rett.data.extra.data;
-                                self.system_setup_list[0].update_time = rett.data.extra.update_time;
-                                self.system_setup_list[0].device_run_status = "正常";
-                                self.system_setup_list[0].devunit_id = res.data.extra.devunit_id;
+                                self.varListData = rett.data.extra.data;
+                                self.abstract_list[0].update_time = rett.data.extra.update_time;
+                                self.abstract_list[0].device_run_status = "正常";
+                                self.abstract_list[0].devunit_id = res.data.extra.devunit_id;
                             } else {
-                                self.listData = [];
-                                self.system_setup_list[0].device_run_status = "停止";
+                                self.varListData = [];
+                                self.abstract_list[0].device_run_status = "停止";
                                 self.$message.error(rett.data.ret_msg);
                             }
                         });
@@ -277,7 +334,7 @@
                 let self = this;
                 let params = {
                     data_range: data_range,
-                    devunit_name: self.system_setup_list[0].devunit_name ,
+                    devunit_name: self.abstract_list[0].devunit_name ,
                 };
 
                 console.log('[basetable] range:', data_range);
@@ -316,7 +373,7 @@
             },
             page_forward_chart: function(var_name, var_id){
                 let params = {
-                    devunit_name: this.system_setup_list[0].devunit_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
                     var_name: var_name,
                     var_id: var_id,
                 };
@@ -327,7 +384,7 @@
             page_forward_module_status() {
                 console.log('[basetable] page_forward_module_status!');
                 let params = {
-                    devunit_name: this.system_setup_list[0].devunit_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
                 };
                 console.log('[basetable] push params:', params);
                 this.$router.push({name: '/devicemodule', params :params});
@@ -336,18 +393,38 @@
             page_forward_module_config() {
                 console.log('[basetable] page_forward_module_config!');
                 let params = {
-                    devunit_name: this.system_setup_list[0].devunit_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
                 };
                 console.log('[basetable] push params:', params);
                 this.$router.push({name: '/ShowGatewayConfig', params :params});
+            },
+            //查看触发器的配置，跳转到触发器配置页面
+            page_forward_trigger_config() {
+                console.log('[basetable] page_forward_trigger_config!');
+                let params = {
+                    device_name: this.abstract_list[0].device_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
+                };
+                console.log('[basetable] push params:', params);
+                this.$router.push({name: '/ShowTriggerConfig', params :params});
+            },
+            //查看告警日志
+            page_forward_alarm_logs() {
+                console.log('[basetable] page_forward_alarm_logs!');
+                let params = {
+                    device_name: this.abstract_list[0].device_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
+                };
+                console.log('[basetable] push params:', params);
+                this.$router.push({name: '/ShowAlarmLogs', params :params});
             },
 
             //写入数值
             message_box_wirte_value: function(index, dev_id, var_id, var_name,value){
                 let self = this;
                 let params = {
-                    'gw_sn':this.system_setup_list[0].gateway_sn,
-                    'devunit_name':this.system_setup_list[0].devunit_name,
+                    'gw_sn':this.abstract_list[0].gateway_sn,
+                    'devunit_name':this.abstract_list[0].devunit_name,
                     'dev_id':dev_id,
                     'var_id':var_id,
                     'var_name':var_name,
@@ -357,8 +434,8 @@
                 self.$axios.post('/api/cmd/exec/remote/set',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData[index]['varValue'] = value;
-                        console.log('self.listData:', self.listData);
+                        self.varListData[index]['varValue'] = value;
+                        console.log('self.varListData:', self.varListData);
 
                     }else{
                         self.$message.error(res.data.ret_msg);
@@ -388,7 +465,45 @@
                         message: '取消输入'
                     });
                 });
-            }
+            },
+            create_trigger: function(index, var_name, var_value) {
+                this.showDialogTrigger = true;
+                this.triggerForm.varName = var_name;
+                console.log('[basetable] create_trigger!', index, var_name, var_value);
+            },
+
+            triggerAdd: function(triggerForm){
+                let self = this;
+                let params = {
+                    device_name: this.abstract_list[0].device_name,
+                    devunit_name: this.abstract_list[0].devunit_name,
+                    varName: triggerForm.varName,
+                    if_number: triggerForm.if_number,
+                    if_symbol: triggerForm.if_symbol,
+                    if_true_comment: triggerForm.if_true_comment,
+                    if_false_comment: triggerForm.if_false_comment,
+                    logs_type: triggerForm.logs_type,
+                };
+
+                console.log('[basetable] triggerForm:', triggerForm);
+
+
+                self.loading  = true;
+                self.$axios.post('/api/trigger/add', params).then(function(res){
+                    self.loading  = false;
+                    if(res.data.ret_code == 0){
+                        self.showDialogTrigger = false;
+                        self.$message({message:res.data.ret_msg,type:'success'})
+                    }else{
+                        self.$message.error(res.data.ret_msg);
+                    }
+
+                },function(err){
+                    self.$message.error(err);
+                })
+                //*/
+            },
+
         },
         computed:{
 

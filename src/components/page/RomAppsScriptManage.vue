@@ -1,12 +1,5 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-star-on"></i> 版本信息管理</el-breadcrumb-item>
-                <!--<el-breadcrumb-item>ROM列表</el-breadcrumb-item>-->
-                <el-breadcrumb-item>ROM管理</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
         <el-radio-group v-model="curRadio" @change="changeTab">
             <el-radio-button label="firmware">ROM管理</el-radio-button>
             <el-radio-button label="apps">插件管理</el-radio-button>

@@ -3,9 +3,6 @@
         <div class='rad-group mb40'>
             <el-tabs v-model="task_type" type="card" @tab-click="handleClick">
 
-
-
-
                 <el-tab-pane label="上传ROM版本" name="1">
                     <div class="form-box tab-cont form-box2">
                         <el-form :model="form1" :rules="rules1" ref="form1">

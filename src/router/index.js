@@ -65,6 +65,16 @@ export default new Router({
                     name: '/ShowGatewayConfig',
                     component: resolve => require(['../components/page/ShowGatewayConfig.vue'], resolve)
                 },
+                {
+                    path: '/ShowTriggerConfig',
+                    name: '/ShowTriggerConfig',
+                    component: resolve => require(['../components/page/ShowTriggerConfig.vue'], resolve)
+                },
+                {
+                    path: '/ShowAlarmLogs',
+                    name: '/ShowAlarmLogs',
+                    component: resolve => require(['../components/page/ShowAlarmLogs.vue'], resolve)
+                },
             ]
         },
         {

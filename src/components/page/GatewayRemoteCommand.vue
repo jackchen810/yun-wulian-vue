@@ -1,11 +1,5 @@
 <template>
     <div v-loading="loading">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-date"></i>网关</el-breadcrumb-item>
-                <el-breadcrumb-item>执行命令</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
         <div class='rad-group mb40'>
                 <el-radio-group v-model="curRadio" @change="changeTab">
                     <el-radio-button label="custom">执行用户命令</el-radio-button>

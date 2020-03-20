@@ -1,12 +1,6 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-star-on"></i>TASK管理</el-breadcrumb-item>
-                <el-breadcrumb-item>TASK列表</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
-        <h4>基本信息:</h4>
+        <h2>基本信息:</h2>
         <el-table :data="system_setup_list" border style="width: 100%;margin:20px 0 20px;" ref="multileTable" v-loading="setup_loading">
             <el-table-column prop="market_gateway" label="行情接口" width="180"></el-table-column>
             <el-table-column prop="riskctrl_name" label="风控名称" width="180"></el-table-column>

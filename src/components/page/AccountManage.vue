@@ -1,11 +1,5 @@
 <template>
     <div class="table" v-loading="loading2">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-menu"></i> 账号管理</el-breadcrumb-item>
-                <el-breadcrumb-item>账号列表</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
         <el-form :inline="true" class="handle-box">
             <el-form-item>
                 <el-button type="primary" icon="plus" :disabled="user_type=='0'?false:true" class="handle-del mr10" @click="showDialogCreateUser=true">新建账号</el-button>

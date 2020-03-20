@@ -1,11 +1,5 @@
 <template>
     <div class="table">
-        <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-star-on"></i> 版本信息管理</el-breadcrumb-item>
-                <el-breadcrumb-item>设备型号管理</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
         <div class="handle-box" v-if="isShow">
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="dialogFormVisible=true">添加型号</el-button>
         </div>

@@ -1,12 +1,7 @@
 <template>
     <div class="table">
-        <el-table :data="system_setup_list" style="width: 100%" ref="multileTable">
-            <el-table-column prop="device_no" label="设备序号" width="180"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
-            <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
-        </el-table>
-        <hr />
-        <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading">
+        <h2>网关配置信息:</h2>
+        <el-table :data="gwConfigList" border style="width: 100%" ref="multipleTable" v-loading="loading">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="varName" label="描述" width="240"></el-table-column>
             <el-table-column prop="varValue" label="值"></el-table-column>
@@ -54,7 +49,7 @@
                     "device_run_status":"运行",
                     "device_link_status":"正常",
                     "update_time":"" }],
-                listData:[],
+                gwConfigList:[],
 
                 pageTotal:1,
                 currentPage:1,
@@ -122,12 +117,12 @@
                     console.log('[ShowGatewayConfig] get real data, params:', params);
                     console.log('[ShowGatewayConfig] get real data, return:', res.data);
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.data;
+                        self.gwConfigList = res.data.extra.data;
                         self.system_setup_list[0].update_time = res.data.extra.update_time;
                         self.system_setup_list[0].device_run_status = "运行";
                         //self.pageTotal = res.data.total;
                     }else{
-                        self.listData = [];
+                        self.gwConfigList = [];
                         self.system_setup_list[0].device_run_status = "停止";
                         self.$message.error(res.data.ret_msg);
                     }

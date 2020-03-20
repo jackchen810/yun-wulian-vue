@@ -1,12 +1,6 @@
 <template>
     <div class="table">
         <div style="overflow: hidden;">
-            <div class="crumbs" style="float:left;">
-                <el-breadcrumb separator="/">
-                    <el-breadcrumb-item><i class="el-icon-upload"></i> 版本升级</el-breadcrumb-item>
-                    <!--<el-breadcrumb-item>推送结果</el-breadcrumb-item>-->
-                </el-breadcrumb>
-            </div>
             <el-form :inline="true" class="handle-box2">
                 <el-form-item label="">
                     <el-input v-model="search_word" placeholder="请输入设备MAC"></el-input>
