@@ -5,7 +5,7 @@
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="device_name" label="设备名称" width="120"></el-table-column>
             <el-table-column prop="devunit_name" label="设备元名称"></el-table-column>
-            <el-table-column prop="varName" label="变量名字" width="120"></el-table-column>
+            <el-table-column prop="var_name" label="变量名字" width="120"></el-table-column>
             <el-table-column prop="if_symbol" label="符号" width="40"></el-table-column>
             <el-table-column prop="if_number" label="值" width="40"></el-table-column>
             <el-table-column prop="if_true_comment" label="判断正确输出"></el-table-column>
@@ -13,7 +13,7 @@
             <el-table-column prop="logs_type" label="日志类型"></el-table-column>
             <el-table-column label="操作" width="80">
             <template slot-scope="scope">
-                <el-button class="btn1" type="primary" size="small" @click="trigger_delete(scope.row.index, scope.row._id)">删除</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="trigger_delete(scope.$index, scope.row._id)">删除</el-button>
             </template>
         </el-table-column>
         </el-table>
@@ -25,7 +25,6 @@
                 :total="pageTotal">
             </el-pagination>
         </div>
-
     </div>
 </template>
 
@@ -99,7 +98,7 @@
                 self.loading = true;
                 self.$axios.post('/api/trigger/del', params).then(function(res){
                     self.loading = false;
-                    console.log('[ShowTriggerConfig] get trigger data, params:', params);
+                    console.log('[ShowTriggerConfig] delete trigger data, index:', index);
                     if(res.data.ret_code == 0){
                         self.triggerList.splice(index, 1);
                         self.$message.success(res.data.ret_msg);

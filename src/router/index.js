@@ -73,7 +73,7 @@ export default new Router({
                 {
                     path: '/ShowAlarmLogs',
                     name: '/ShowAlarmLogs',
-                    component: resolve => require(['../components/page/ShowAlarmLogs.vue'], resolve)
+                    component: resolve => require(['../components/page/ShowAlarmRunLogs.vue'], resolve)
                 },
             ]
         },

@@ -11,7 +11,7 @@
             <el-table-column prop="update_time" label="数据更新时间" width="200"></el-table-column>
         </el-table>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_status">查看模块状态</el-button>
-        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_alarm_logs">查看告警日志</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_alarm_logs">查看日志</el-button>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="showDialogExport = true">导出数据</el-button>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_module_config">查看网关配置</el-button>
         <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_trigger_config">查看触发器配置</el-button>
@@ -84,6 +84,7 @@
                 <el-form-item label="结果输出到："  :label-width="formLabelWidth">
                     <el-radio-group v-model="triggerForm.logs_type">
                         <el-radio label="告警日志"></el-radio>
+                        <el-radio label="运行日志"></el-radio>
                         <el-radio label="操作日志"></el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -126,11 +127,14 @@
                     logs_type:'告警日志',
                 },
                 triggerRules: {
+                    if_symbol:[
+                        {required: true, message: '请输入比较符', trigger: 'blur'},
+                    ],
+                    if_number:[
+                        {required: true, message: '请输入比较数值', trigger: 'blur'}
+                    ],
                     if_true_comment:[
                         {required: true, message: '请输入比较匹配后输出到日志中的内容', trigger: 'blur'}
-                    ],
-                    if_false_comment:[
-                        {required: true, message: '请输入比较不匹配后输出到日志中的内容', trigger: 'blur'}
                     ],
                 },
 
@@ -474,10 +478,21 @@
 
             triggerAdd: function(triggerForm){
                 let self = this;
+
+                if (triggerForm.if_symbol == ''){
+                    self.$message.error("请选择比较符");
+                    return;
+                }
+
+                if (triggerForm.if_number == ''){
+                    self.$message.error("请输入比较数");
+                    return;
+                }
+
                 let params = {
                     device_name: this.abstract_list[0].device_name,
                     devunit_name: this.abstract_list[0].devunit_name,
-                    varName: triggerForm.varName,
+                    var_name: triggerForm.varName,
                     if_number: triggerForm.if_number,
                     if_symbol: triggerForm.if_symbol,
                     if_true_comment: triggerForm.if_true_comment,
@@ -493,7 +508,7 @@
                     self.loading  = false;
                     if(res.data.ret_code == 0){
                         self.showDialogTrigger = false;
-                        self.$message({message:res.data.ret_msg,type:'success'})
+                        self.$message({message:res.data.ret_msg, type:'success'})
                     }else{
                         self.$message.error(res.data.ret_msg);
                     }
