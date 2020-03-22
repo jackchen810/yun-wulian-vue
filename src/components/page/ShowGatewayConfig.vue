@@ -45,7 +45,7 @@
                     "project_name":"",
                     "project_local":"",
                     "devunit_name":"",
-                    "device_name":"",
+                    "dev_cn_name":"",
                     "device_run_status":"运行",
                     "device_link_status":"正常",
                     "update_time":"" }],
@@ -76,10 +76,10 @@
             '$route' (to, from) {
                 console.log('[ShowGatewayConfig] 路由参数变化，刷新数据', this.$route.path);
 
-                if (typeof(this.$route.query.device_name) != "undefined") {
+                if (typeof(this.$route.query.dev_cn_name) != "undefined") {
                     this.system_setup_list[0].project_name = this.$route.query.project_name;
                     //this.system_setup_list[0].project_local = '';
-                    this.system_setup_list[0].device_name = this.$route.query.device_name;
+                    this.system_setup_list[0].dev_cn_name = this.$route.query.dev_cn_name;
                     this.system_setup_list[0].devunit_name = this.$route.query.devunit_name;
                 }
                 //console.log(this.getStatus(this.$route.path))

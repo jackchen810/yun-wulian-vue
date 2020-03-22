@@ -21,7 +21,7 @@
     export default {
         data: function(){
             return {
-                //device_name:localStorage.getItem('ms_username'),
+                //dev_cn_name:localStorage.getItem('ms_username'),
                 formC:{
                     devunit_name: '',
                     channel_name: '',
@@ -121,7 +121,7 @@
         computed:{
             getRountPush: function() {
                 console.log('route para by baseTable!');
-                //let task_id = this.$route.params.device_name;
+                //let task_id = this.$route.params.dev_cn_name;
                 //this.$message({message: this.$route.params,type:'warning'});
 
                 if (typeof(this.$route.params.devunit_name) === "undefined") {

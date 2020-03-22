@@ -4,12 +4,12 @@
             <el-button type="primary" icon="plus" class="handle-del mr10" @click="clickDialogBtn">添加设备</el-button>
             <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogSaveBtn">保存修改</el-button>
         </div>
-        <el-table :data="listData" border style="width: 100%" ref="multipleTable" v-loading="loading"  @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
+        <el-table :data="deviceListData" border style="width: 100%" ref="multipleTable" v-loading="loading"  @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column prop="update_time" label="创建时间" width="160"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="240">
+            <el-table-column prop="dev_cn_name" label="设备名称" width="240">
                 <template slot-scope="scope" >
-                    <el-input size="small" v-model="scope.row.device_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
-                    <span v-else>{{ scope.row.device_name }}</span>
+                    <el-input size="small" v-model="scope.row.dev_cn_name" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id && editColumnKey==scope.column.property"></el-input>
+                    <span v-else>{{ scope.row.dev_cn_name }}</span>
                 </template>
             </el-table-column>
             <el-table-column prop="gateway_sn" label="设备标识" width="190">
@@ -53,7 +53,7 @@
             </el-table-column>
             <el-table-column label="操作" v-if="isShow" width="160">
                 <template slot-scope="scope">
-                    <el-button class="btn1" type="text" size="small" @click="delDevice(scope.row._id,scope.row.device_name,scope.$index)">删除</el-button>
+                    <el-button class="btn1" type="text" size="small" @click="delDevice(scope.row._id,scope.row.dev_cn_name,scope.$index)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -95,8 +95,8 @@
                         <el-radio label="金大万翔"></el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item label="设备中文名称" prop=device_name :label-width="formLabelWidth">
-                    <el-input v-model="form.device_name" class="diainp" auto-complete="off"></el-input>
+                <el-form-item label="设备中文名称" prop=dev_cn_name :label-width="formLabelWidth">
+                    <el-input v-model="form.dev_cn_name" class="diainp" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="网关标识" prop=gateway_sn :label-width="formLabelWidth">
                     <el-input v-model="form.gateway_sn" class="diainp" auto-complete="off"></el-input>
@@ -146,7 +146,7 @@
                     gateway_vendor:'',
                     devunit_name:'',
                     file_name:'',
-                    device_name:'',
+                    dev_cn_name:'',
                     channel_name:'',
                     project_name:'',
                     device_image:'',
@@ -159,7 +159,7 @@
                     devunit_name:[
                         {required: true, message: '请输入数据库中定义的设备字段', trigger: 'blur'}
                     ],
-                    device_name:[
+                    dev_cn_name:[
                         {required: true, message: '请输入设备名称', trigger: 'blur'}
                     ],
                     project_name:[
@@ -169,7 +169,7 @@
                 formLabelWidth: '120px',
                 fileList: [],
                 loading:false,
-                listData:[],
+                deviceListData:[],
                 listDataUpdate:[],
                 prjOwnerList:[],
 
@@ -195,11 +195,11 @@
                 self.$axios.post('/api/device/manage/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
-                        self.listData = res.data.extra.slice(0, page_size);
+                        self.deviceListData = res.data.extra;
                         self.listDataUpdate = [];
                         self.pageTotal = res.data.total;
                     }else{
-                        self.listData = [];
+                        self.deviceListData = [];
                         self.listDataUpdate = [];
                         self.$message.error(res.data.ret_msg);
                     }
@@ -224,7 +224,7 @@
             },
             clickDialogBtn: function(){
                 var self = this;
-                self.form.device_name = '';
+                self.form.dev_cn_name = '';
                 this.dialogFormVisible=true;
             },
             clickDialogSaveBtn: function(){
@@ -262,7 +262,7 @@
                 var self = this;
                 var params = {
                     _id: id,
-                    device_name:fileName
+                    dev_cn_name:fileName
                 };
                 self.loading = true;
                 self.$axios.post('api/device/manage/del',params).then(function(res){
@@ -270,7 +270,7 @@
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
                         // self.getDeviceList({});
-                        self.listData.splice(i,1);
+                        self.deviceListData.splice(i,1);
                     }else{
                         self.$message.error(res.data.ret_msg)
                     }
@@ -288,7 +288,7 @@
                     gateway_sn: stForm.gateway_sn,
                     gateway_vendor: stForm.gateway_vendor,
                     devunit_name: stForm.devunit_name,
-                    device_name: stForm.device_name,
+                    dev_cn_name: stForm.dev_cn_name,
                     devunit_name: stForm.devunit_name,
                     project_name: stForm.project_name,
                     comment: stForm.comment,
@@ -300,7 +300,7 @@
                         self.$message({message:'添加成功',type:'success'});
                         self.dialogFormVisible = false;
                         // self.getDeviceList({});
-                        //self.listData.splice(i,1);
+                        //self.deviceListData.splice(i,1);
                     }else{
                         self.$message.error(res.data.ret_msg)
                     }
@@ -326,7 +326,7 @@
                     this.$message.error('创建失败');
                 }
                 self.fileList = [];
-                //self.form.device_name = '';
+                //self.form.dev_cn_name = '';
                 self.form.project_name = '';
                 self.form.comment = '';
                 //this.fullscreenLoading  = false;

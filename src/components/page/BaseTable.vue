@@ -4,7 +4,7 @@
         <el-table :data="abstract_list" style="width: 100%" ref="multileTable">
             <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
             <el-table-column prop="project_local" label="装备地点" width="100"></el-table-column>
-            <el-table-column prop="device_name" label="设备名称" width="180"></el-table-column>
+            <el-table-column prop="dev_cn_name" label="设备名称" width="180"></el-table-column>
             <el-table-column prop="gateway_sn" label="设备标识" width="190"></el-table-column>
             <el-table-column prop="device_run_status" label="设备运行状态" width="120"></el-table-column>
             <el-table-column prop="device_link_status" label="设备链路状态" width="120"></el-table-column>
@@ -22,7 +22,7 @@
             <el-table-column prop="varValue" label="值"></el-table-column>
             <el-table-column label="操作" width="350">
             <template slot-scope="scope">
-                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, abstract_list[0].devunit_id, scope.row.varId, scope.row.varName)">写入</el-button>
+                <el-button class="btn1" type="primary" size="small" @click="message_box_wirte(scope.$index, abstract_list[0].devunit_id, scope.row.varId, scope.row.varName)">数值修改</el-button>
                 <el-button class="btn1" type="primary" size="small" @click="create_trigger(scope.$index, scope.row.varName, scope.row.varValue)">添加触发器</el-button>
                 <el-button class="btn1" type="primary" size="small" @click="page_forward_chart(scope.row.varName, scope.row.varId)">查看历史曲线</el-button>
             </template>
@@ -145,7 +145,7 @@
                     "project_local":"",
                     "devunit_id":"",
                     "devunit_name":"",
-                    "device_name":"",
+                    "dev_cn_name":"",
                     "device_run_status":"运行",
                     "device_link_status":"正常",
                     "update_time":"" }],
@@ -201,10 +201,10 @@
             //url的表现形式(url中带有参数)
             this.user_type = localStorage.getItem('user_type');  //管理员或用户
             this.user_account = localStorage.getItem('user_account');  //管理员或用户
-            if (typeof(this.$route.query.device_name) != "undefined") {
+            if (typeof(this.$route.query.dev_cn_name) != "undefined") {
                 this.abstract_list[0].project_name = this.$route.query.project_name;
                 //this.abstract_list[0].project_local = '';
-                this.abstract_list[0].device_name = this.$route.query.device_name;
+                this.abstract_list[0].dev_cn_name = this.$route.query.dev_cn_name;
                 this.abstract_list[0].gateway_sn = this.$route.query.gateway_sn;
                 this.abstract_list[0].devunit_name = this.$route.query.devunit_name;
                 console.log('[basetable] created时，从url参数中获取信息');
@@ -244,10 +244,10 @@
             '$route' (to, from) {
                 console.log('[basetable] 路由参数变化，刷新数据', this.$route.path);
 
-                if (typeof(this.$route.query.device_name) != "undefined") {
+                if (typeof(this.$route.query.dev_cn_name) != "undefined") {
                     this.abstract_list[0].project_name = this.$route.query.project_name;
                     //this.abstract_list[0].project_local = '';
-                    this.abstract_list[0].device_name = this.$route.query.device_name;
+                    this.abstract_list[0].dev_cn_name = this.$route.query.dev_cn_name;
                     this.abstract_list[0].gateway_sn = this.$route.query.gateway_sn;
                     this.abstract_list[0].devunit_name = this.$route.query.devunit_name;
                     console.log('[basetable] 路由对象中获取数据');
@@ -406,7 +406,7 @@
             page_forward_trigger_config() {
                 console.log('[basetable] page_forward_trigger_config!');
                 let params = {
-                    device_name: this.abstract_list[0].device_name,
+                    dev_cn_name: this.abstract_list[0].dev_cn_name,
                     devunit_name: this.abstract_list[0].devunit_name,
                 };
                 console.log('[basetable] push params:', params);
@@ -416,7 +416,7 @@
             page_forward_alarm_logs() {
                 console.log('[basetable] page_forward_alarm_logs!');
                 let params = {
-                    device_name: this.abstract_list[0].device_name,
+                    dev_cn_name: this.abstract_list[0].dev_cn_name,
                     devunit_name: this.abstract_list[0].devunit_name,
                 };
                 console.log('[basetable] push params:', params);
@@ -490,7 +490,7 @@
                 }
 
                 let params = {
-                    device_name: this.abstract_list[0].device_name,
+                    dev_cn_name: this.abstract_list[0].dev_cn_name,
                     devunit_name: this.abstract_list[0].devunit_name,
                     var_name: triggerForm.varName,
                     if_number: triggerForm.if_number,

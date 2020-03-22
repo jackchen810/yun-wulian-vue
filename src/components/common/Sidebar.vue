@@ -116,20 +116,20 @@
                             var dev_manage = res.data.extra.shift();
                             console.log('[sidebar] devlist:', dev_manage);
                             var project_name = dev_manage['project_name'];
-                            //device_name
-                            var device_name = dev_manage['device_name'];
+                            //dev_cn_name
+                            var dev_cn_name = dev_manage['dev_cn_name'];
                             var gateway_sn = dev_manage['gateway_sn'];
                             var devunit_name = dev_manage['devunit_name'];
                             //# 不识别
-                            var display_name = device_name.replace("#","%23");
+                            var display_name = dev_cn_name.replace("#","%23");
 
                             var prjItem = {
                                 icon: 'el-icon-menu',
                                 index: '2'+ i,
                                 title: project_name,
                                 subs:[{
-                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
-                                    title: device_name,
+                                    index: '/basetable?dev_cn_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
+                                    title: dev_cn_name,
                                 }],
                             };
 
@@ -156,14 +156,14 @@
                                 //console.log('[sidebar] dev_manage:', dev_manage);
 
                                 //新的device信息
-                                device_name = dev_manage['device_name'];
+                                dev_cn_name = dev_manage['dev_cn_name'];
                                 devunit_name = dev_manage['devunit_name'];
                                 gateway_sn = dev_manage['gateway_sn'];
                                 //# 不识别
-                                display_name = device_name.replace("#","%23");
+                                display_name = dev_cn_name.replace("#","%23");
                                 let subitem = {
-                                    index: '/basetable?device_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
-                                    title: device_name,
+                                    index: '/basetable?dev_cn_name=' + display_name + '&project_name='+project_name +'&gateway_sn=' + gateway_sn +'&devunit_name=' + devunit_name,
+                                    title: dev_cn_name,
                                 };
                                 prjItem.subs.push(subitem);
 

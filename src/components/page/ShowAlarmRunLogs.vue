@@ -13,7 +13,7 @@
                 <el-table :data="runLogList" border style="width: 100%" ref="multipleTable" v-loading="loading">
                     <el-table-column type="index" label="序号" width="50"></el-table-column>
                     <el-table-column prop="update_time" label="时间" width="180"></el-table-column>
-                    <el-table-column prop="device_name" label="设备名称" width="250"></el-table-column>
+                    <el-table-column prop="dev_cn_name" label="设备名称" width="250"></el-table-column>
                     <el-table-column prop="comment" label="运行日志"></el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -21,7 +21,7 @@
                 <el-table :data="alarmLogList" border style="width: 100%" ref="multipleTable" v-loading="loading">
                     <el-table-column type="index" label="序号" width="50"></el-table-column>
                     <el-table-column prop="update_time" label="时间" width="180"></el-table-column>
-                    <el-table-column prop="device_name" label="设备名称" width="250"></el-table-column>
+                    <el-table-column prop="dev_cn_name" label="设备名称" width="250"></el-table-column>
                     <el-table-column prop="comment" label="告警日志"></el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -29,7 +29,7 @@
                 <el-table :data="opLogList" border style="width: 100%" ref="multipleTable" v-loading="loading">
                     <el-table-column type="index" label="序号" width="50"></el-table-column>
                     <el-table-column prop="update_time" label="时间" width="180"></el-table-column>
-                    <el-table-column prop="device_name" label="设备名称" width="250"></el-table-column>
+                    <el-table-column prop="dev_cn_name" label="设备名称" width="250"></el-table-column>
                     <el-table-column prop="comment" label="操作日志"></el-table-column>
                     <el-table-column prop="user_account" label="操作账号"></el-table-column>
                 </el-table>
@@ -65,7 +65,7 @@
                 showDialogExport: false,
 
 
-                device_name:'',
+                dev_cn_name:'',
                 devunit_name:'',
 
 
