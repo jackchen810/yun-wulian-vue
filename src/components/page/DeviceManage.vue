@@ -135,7 +135,7 @@
             return {
                 user_type:1,  //0:管理员, 1:用户
                 user_account:'',
-                uploadUrl:"api/device/manage/add",
+                uploadUrl:"api/devunit/manage/add",
                 isShow:localStorage.getItem('userMsg') =='1'?false:true,
                 dialogFormVisible:false,
                 editRowId:'-1',
@@ -192,7 +192,7 @@
                     current_page: current_page,
                 };
                 self.loading = true;
-                self.$axios.post('/api/device/manage/page/list',params).then(function(res){
+                self.$axios.post('/api/devunit/manage/page/list',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.deviceListData = res.data.extra;
@@ -233,7 +233,7 @@
                     list_data:this.listDataUpdate
                 };
                 self.loading = true;
-                self.$axios.post('api/device/manage/update', params).then(function(res){
+                self.$axios.post('api/devunit/manage/update', params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         //self.$message({message:'修改成功',type:'success'});
@@ -265,7 +265,7 @@
                     dev_cn_name:fileName
                 };
                 self.loading = true;
-                self.$axios.post('api/device/manage/del',params).then(function(res){
+                self.$axios.post('api/devunit/manage/del',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'删除成功',type:'success'});
@@ -294,7 +294,7 @@
                     comment: stForm.comment,
                 };
                 self.loading = true;
-                self.$axios.post('api/device/manage/add',params).then(function(res){
+                self.$axios.post('api/devunit/manage/add',params).then(function(res){
                     self.loading = false;
                     if(res.data.ret_code == 0){
                         self.$message({message:'添加成功',type:'success'});

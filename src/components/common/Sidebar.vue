@@ -108,9 +108,9 @@
                 let params = {
                     filter: {project_name: { $in: self.prjOwnerList}}
                 };
-                await self.$axios.post('/api/device/manage/list',params).then(function(res){
+                await self.$axios.post('/api/devunit/manage/list',params).then(function(res){
                     if(res.data.ret_code == 0){
-                        console.log('[sidebar] device/manage/list :', res.data.extra.length);
+                        console.log('[sidebar] devunit/manage/list :', res.data.extra.length);
                         //加载各个项目,  prjOwnerList存放project_name
                         for(let i = 0; res.data.extra.length > 0; i++) {
                             var dev_manage = res.data.extra.shift();

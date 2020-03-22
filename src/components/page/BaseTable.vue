@@ -346,7 +346,7 @@
 
                 self.loading  = true;
                 //self.$axios.post('/api/gateway/real/data', params).then(function(res){
-                self.$axios.post('/api/device/manage/export/history', params).then(function(res){
+                self.$axios.post('/api/devunit/manage/export/history', params).then(function(res){
                     self.loading  = false;
                     if(res.data.ret_code == 0){
                         const aLink = document.createElement('a');
