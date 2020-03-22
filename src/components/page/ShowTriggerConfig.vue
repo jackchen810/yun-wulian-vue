@@ -5,7 +5,6 @@
         <el-table :data="triggerList" border style="width: 100%" ref="multipleTable" v-loading="loading" @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="dev_cn_name" label="设备名称" width="150"></el-table-column>
-            <el-table-column prop="devunit_name" label="设备元名称"></el-table-column>
             <el-table-column prop="var_name" label="设备变量名称" width="120"></el-table-column>
             <el-table-column prop="if_symbol" label="符号" width="40"></el-table-column>
             <el-table-column prop="if_number" label="值" width="40"></el-table-column>
