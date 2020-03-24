@@ -59,6 +59,13 @@
 
         <el-dialog title="添加触发器" :visible.sync="showDialogTrigger" class="digcont">
             <el-form :model="triggerForm" :rules="triggerRules" ref="triggerForm">
+                <el-form-item label="记录日志类型："  :label-width="formLabelWidth">
+                    <el-radio-group v-model="triggerForm.logs_type">
+                        <el-radio label="告警日志"></el-radio>
+                        <el-radio label="运行日志"></el-radio>
+                        <el-radio label="操作日志"></el-radio>
+                    </el-radio-group>
+                </el-form-item>
                 <el-form-item label="设备变量：" prop=varName :label-width="formLabelWidth">
                     <el-input v-model="triggerForm.varName" class="diainp" auto-complete="off" :disabled="true"></el-input>
                 </el-form-item>
@@ -80,13 +87,6 @@
                 </el-form-item>
                 <el-form-item label="结果不匹配输出：" prop="if_false_comment" :label-width="formLabelWidth">
                     <el-input v-model="triggerForm.if_false_comment" class="diainp" auto-complete="off"></el-input>
-                </el-form-item>
-                <el-form-item label="结果输出到："  :label-width="formLabelWidth">
-                    <el-radio-group v-model="triggerForm.logs_type">
-                        <el-radio label="告警日志"></el-radio>
-                        <el-radio label="运行日志"></el-radio>
-                        <el-radio label="操作日志"></el-radio>
-                    </el-radio-group>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">

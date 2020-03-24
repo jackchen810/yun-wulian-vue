@@ -1,15 +1,26 @@
 <template>
     <div class="table">
         <h2>触发器配置信息:</h2>
-        <el-button type="primary" icon="plus" class="handle-box2" @click="clickDialogSaveBtn">保存修改</el-button>
+        <el-button class="btn_box" type="primary" icon="el-icon-view" @click="page_forward_alarm_logs">查看日志记录</el-button>
+        <el-button class="btn_box_right" type="primary" icon="plus" @click="clickDialogSaveBtn">保存修改</el-button>
         <el-table :data="triggerList" border style="width: 100%" ref="multipleTable" v-loading="loading" @cell-dblclick="handleCellDbClick" @row-click="handleRowClick">
             <el-table-column type="index" label="序号" width="50"></el-table-column>
             <el-table-column prop="dev_cn_name" label="设备名称" width="150"></el-table-column>
             <el-table-column prop="var_name" label="设备变量名称" width="120"></el-table-column>
             <el-table-column prop="if_symbol" label="符号" width="40"></el-table-column>
             <el-table-column prop="if_number" label="值" width="40"></el-table-column>
-            <el-table-column prop="if_true_comment" label="判断正确输出"></el-table-column>
-            <el-table-column prop="if_false_comment" label="判断错误输出"></el-table-column>
+            <el-table-column prop="if_true_comment" label="判断正确输出">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.if_true_comment" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id"></el-input>
+                    <span v-else>{{ scope.row.if_true_comment }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="if_false_comment" label="判断错误输出">
+                <template slot-scope="scope" >
+                    <el-input size="small" v-model="scope.row.if_false_comment" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id"></el-input>
+                    <span v-else>{{ scope.row.if_false_comment }}</span>
+                </template>
+            </el-table-column>
             <el-table-column prop="logs_type" label="日志类型">
                 <template slot-scope="scope" >
                     <el-select size="small" v-model="scope.row.logs_type" @change="handleEdit(editColumnKey, scope.row)" v-if="editRowId==scope.row._id">
@@ -37,6 +48,7 @@
                 :total="pageTotal">
             </el-pagination>
         </div>
+
     </div>
 </template>
 
@@ -123,6 +135,16 @@
                         self.$message.error(res.data.ret_msg);
                     }
                 });
+            },
+            //查看告警日志
+            page_forward_alarm_logs() {
+                console.log('[ShowTriggerConfig] page_forward_alarm_logs!');
+                let params = {
+                    dev_cn_name: this.triggerList[0].dev_cn_name,
+                    devunit_name: this.triggerList[0].devunit_name,
+                };
+                console.log('[ShowTriggerConfig] push params:', params);
+                this.$router.push({name: '/ShowAlarmLogs', params :params});
             },
             clickDialogSaveBtn: function(){
                 var self = this;
@@ -216,7 +238,8 @@
     .orange{color:#eb9e05;background-color:inherit;}
     .title_box{margin-top:50px;}
     .btn_box{margin-top: 20px;margin-right: 50px;}
+    .btn_box_right{margin-top: 20px;margin-right: 50px;float:right;}
     .upload-demo .el-upload {cursor: pointer;position: relative;overflow: hidden;}
     .upload-demo .el-upload:hover {border-color: #409EFF;}
-    .handle-box2{display:inline-block;float:right;}
+    .btn_box2{display:block;margin:0 auto;text-align: center;}
 </style>
