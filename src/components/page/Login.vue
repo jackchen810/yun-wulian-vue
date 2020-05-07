@@ -19,9 +19,9 @@
             </el-form>
 
             <div class="login-icp">
-                <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo?spm=5176.12825654.7y9jhqsfz.114.3dbd2c4ajumxOW" target="_blank">京ICP备18056882号</el-link>
+                <el-link href="http://www.beian.miit.gov.cn" type="primary" target="_blank" >京ICP备18056882号</el-link>
                 <br />
-                <el-link type="info">2018-2020 dsjiaqi.cn 版权所有 </el-link>
+                <el-link type="primary" disabled>2018-2020 dsjiaqi.cn 版权所有 </el-link>
             </div>
         </div>
     </div>
@@ -240,7 +240,7 @@
     .login-icp{
         margin-top: 200px;
         text-align: center;
-        color: #f8fff4;
+        color: #fff;
     }
 
 </style>
