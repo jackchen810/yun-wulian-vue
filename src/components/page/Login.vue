@@ -17,6 +17,12 @@
                 </div>
                 <!--<p style="font-size:12px;line-height:30px;color:#999;">Tips : 用户名和密码随便填。</p>-->
             </el-form>
+
+            <div class="login-icp">
+                <el-link href="http://www.beian.gov.cn/portal/registerSystemInfo?spm=5176.12825654.7y9jhqsfz.114.3dbd2c4ajumxOW" target="_blank">京ICP备18056882号</el-link>
+                <br />
+                <el-link type="info">2018-2020 dsjiaqi.cn 版权所有 </el-link>
+            </div>
         </div>
     </div>
 </template>
@@ -231,4 +237,10 @@
         width:100%;
         height:36px;
     }
+    .login-icp{
+        margin-top: 200px;
+        text-align: center;
+        color: #f8fff4;
+    }
+
 </style>
