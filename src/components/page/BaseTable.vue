@@ -2,8 +2,8 @@
     <div class="table">
         <h2>基本信息:</h2>
         <el-table :data="abstract_list" style="width: 100%" ref="multileTable">
-            <el-table-column prop="project_name" label="项目名称" width="180"></el-table-column>
-            <el-table-column prop="project_local" label="装备地点" width="100"></el-table-column>
+            <el-table-column prop="project_name" label="项目名称"></el-table-column>
+            <el-table-column prop="project_local" label="装备地点" ></el-table-column>
             <el-table-column prop="dev_cn_name" label="设备名称" width="180"></el-table-column>
             <el-table-column prop="gateway_sn" label="设备标识" width="190"></el-table-column>
             <el-table-column prop="device_run_status" label="设备运行状态" width="120"></el-table-column>
@@ -112,9 +112,7 @@
                 showDialogExport: false,
                 showDialogTrigger: false,
 
-
                 updateTimer: '',
-
 
                 triggerForm: {
                     symbolList:['>','<','=','!='],
@@ -298,7 +296,7 @@
                     }else{
                         self.varListData = [];
                         self.abstract_list[0].device_run_status = "停止";
-                        self.$message.error(res.data.ret_msg);
+                        // self.$message.error(res.data.ret_msg);
                     }
 
                     //如果timer存在就直接返回, 这里数据每分钟更新一次
@@ -425,6 +423,7 @@
 
             //写入数值
             message_box_wirte_value: function(index, dev_id, var_id, var_name,value){
+                console.log(this.abstract_list);
                 let self = this;
                 let params = {
                     'gw_sn':this.abstract_list[0].gateway_sn,
@@ -434,17 +433,19 @@
                     'var_name':var_name,
                     'var_value':value
                 };
-                self.loading = true;
-                self.$axios.post('/api/cmd/exec/remote/set',params).then(function(res){
-                    self.loading = false;
-                    if(res.data.ret_code == 0){
-                        self.varListData[index]['varValue'] = value;
-                        console.log('self.varListData:', self.varListData);
+                console.log(params);
+                // self.loading = true;
+                // self.$axios.post('/api/cmd/exec/remote/set',params).then(function(res){
+                //     self.loading = false;
+                //     if(res.data.ret_code == 0){
+                //         self.varListData[index]['varValue'] = value;
+                //         console.log('self.varListData:', self.varListData);
 
-                    }else{
-                        self.$message.error(res.data.ret_msg);
-                    }
-                })
+                //     }
+                //     else{
+                //         self.$message.error(res.data.ret_msg);
+                //     }
+                // })
             },
             message_box_wirte: function(index, dev_id, var_id, var_name){
                 console.log('[basetable] message_box_wirte!', index, dev_id, var_id, var_name);

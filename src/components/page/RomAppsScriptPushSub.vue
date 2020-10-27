@@ -725,13 +725,13 @@
                 var reg_name2 = /^[A-Fa-f\d]{2}[A-Fa-f\d]{2}[A-Fa-f\d]{2}[A-Fa-f\d]{2}[A-Fa-f\d]{2}[A-Fa-f\d]{2}$/;
                 var macarr = self.splitStr(value);
                 var len = macarr.length;
-                for (var i = 0; i < len; i++) {
-                    if (!reg_name.test(macarr[i]) && !reg_name2.test(macarr[i])) {
-                        callback(new Error('输入有误，以逗号或回车分隔'));
-                    } else {
-                        callback();
-                    }
-                }
+                // for (var i = 0; i < len; i++) {
+                //     if (!reg_name.test(macarr[i]) && !reg_name2.test(macarr[i])) {
+                //         callback(new Error('输入有误，以逗号或回车分隔'));
+                //     } else {
+                //         callback();
+                //     }
+                // }
             },
             //按逗号和回车分隔字符串
             splitStr: function (str) {

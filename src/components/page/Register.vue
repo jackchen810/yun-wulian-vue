@@ -53,6 +53,7 @@
                     city:'',
                     selectProv: '',
                     selectCity: '',
+                    user_belong:'',
                 },
                 provs:global_.provs,
                 citys: [],
@@ -95,6 +96,7 @@
                     user_email: self.ruleForm.email,
                     user_phone:self.ruleForm.phone,
                     user_city:self.ruleForm.selectProv,
+                    user_belong:self.ruleForm.user_belong,
                 };
                 console.log(params);
                 self.$axios.post('/api/admin/register',params).then(function(res){

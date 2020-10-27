@@ -19,9 +19,9 @@
             </el-form>
 
             <div class="login-icp">
-                <el-link href="http://www.beian.miit.gov.cn" type="primary" target="_blank" >京ICP备18056882号</el-link>
+                <el-link href="http://www.beian.miit.gov.cn" type="primary" target="_blank" >京ICP备15044078号-1</el-link>
                 <br />
-                <el-link type="primary" disabled>2018-2020 dsjiaqi.cn 版权所有 </el-link>
+                <el-link type="primary" disabled>2018-2020 北京金大万翔环保科技有限公司 版权所有 </el-link>
             </div>
         </div>
     </div>
@@ -76,6 +76,7 @@
                     //user_password: self.encode(self.ruleForm.password)
                 };
                 self.$axios.post('/api/admin/login',params).then(function(res){
+                    console.log(res)
                     if(res.data.ret_code == 0){
                         self.$message({message:'登录成功！', type:'success'});
                         let user_type = res.data.extra;

@@ -1,16 +1,53 @@
 <template>
     <div class="sidebar">
+
+       <!-- <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" @select="handleSelect" theme="dark" unique-opened router>
+            <el-submenu v-for="(item,index) in items" :key="index"  :index="item.index">
+                <template  v-if="item.subs">
+                    <template slot="title" ><i :class="item.icon"></i>{{ item.title }}</template>
+                </template>
+                 <template  v-if="!(item.subs[0].subs)">
+                    <el-menu-item-group  v-for="(subItem,x) in item.subs" :key="x" :index="item.index+'_'+x">
+                        <el-menu-item :index="subItem.index">{{ subItem.title }}</el-menu-item>
+                    </el-menu-item-group>
+                 </template>
+                  <template v-else>
+                    <el-submenu v-for="(subItem,x) in item.subs" :key="x" :index="item.index+'_'+x">   
+                        <template slot="title"><i :class="subItem.icon"></i>{{ subItem.title }}</template>
+                        <el-menu-item-group>
+                        <el-menu-item  v-for="(subItemb,y) in item.subs[x].subs"  :key="y"  :index="subItemb.index"  >
+                        {{subItemb.title}}
+                        </el-menu-item>
+                    </el-menu-item-group>         
+                    </el-submenu>
+                </template>
+
+                 <el-submenu v-for="(subItem,x) in item.subs" :key="x" :index="item.index+'_'+x">   
+                    <template slot="title"><i :class="subItem.icon"></i>{{ subItem.title }}二级</template>
+                    <el-menu-item-group>
+                    <el-menu-item  v-for="(subItemb,y) in item.subs[x].subs"  :key="y"  :index="subItemb.index"  >
+                      {{subItemb.title}}
+                    </el-menu-item>
+                </el-menu-item-group>         
+                 </el-submenu> 
+
+
+
+            </el-submenu>
+    </el-menu> -->
+
         <el-menu :default-active="onRoutes" class="el-menu-vertical-demo" @select="handleSelect" theme="dark" unique-opened router>
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu :index="item.index">
+                    <el-submenu :index="item.index" :key="item.index">
                         <template slot="title"><i :class="item.icon"></i>{{ item.title }}</template>
-                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">{{ subItem.title }}
+                        <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">
+                            {{subItem.title}}
                         </el-menu-item>
                     </el-submenu>
                 </template>
                 <template v-else>
-                    <el-menu-item :index="item.index">
+                    <el-menu-item :index="item.index"  :key="item.index">
                         <i :class="item.icon"></i>{{ item.title }}
                     </el-menu-item>
                 </template>
@@ -79,6 +116,7 @@
                             },
                         ]
                     },
+                   
                 ]
             }
             this.loadProjectSidebar();
@@ -92,7 +130,6 @@
         methods:{
             loadProjectSidebar: async function (){//获取项目列表
                 let self = this;
-
                 //获取用户所属的项目列表
                 self.loading = true;
                 await self.$axios.post('api/admin/get/own/project', {user_account:self.user_account}).then(function(res){
@@ -102,7 +139,6 @@
                      }
                 });
 
-
                 //console.log('[sidebar] prjOwnerList:', self.prjOwnerList);
 
                 let params = {
@@ -110,11 +146,11 @@
                 };
                 await self.$axios.post('/api/devunit/manage/list',params).then(function(res){
                     if(res.data.ret_code == 0){
-                        console.log('[sidebar] devunit/manage/list :', res.data.extra.length);
+                     
                         //加载各个项目,  prjOwnerList存放project_name
                         for(let i = 0; res.data.extra.length > 0; i++) {
                             var dev_manage = res.data.extra.shift();
-                            console.log('[sidebar] devlist:', dev_manage);
+                            // console.log('[sidebar] devlist:', dev_manage);
                             var project_name = dev_manage['project_name'];
                             //dev_cn_name
                             var dev_cn_name = dev_manage['dev_cn_name'];
@@ -132,28 +168,15 @@
                                     title: dev_cn_name,
                                 }],
                             };
-
-
-                            //console.log('[sidebar] device list:', res.data.extra);
-                            //console.log('[sidebar] device list len:', res.data.extra.length);
-                            //console.log('[sidebar] try find project_name:', project_name);
-                            console.log('[sidebar] find dev_manage:', dev_manage);
-
+                            // console.log('[sidebar] find dev_manage:', dev_manage);
                             //获取剩下的菜单信息
                             for(let m = 0; m < res.data.extra.length; m++) {
                                 if (res.data.extra[m]['project_name'] != project_name){
-                                    //console.log('[sidebar] not found, project_name:', m, res.data.extra[m]['project_name']);
                                     continue;
                                 }
-
-                                //console.log('[sidebar] found, project_name:', m, res.data.extra[m]['project_name']);
-
-                                // 弹出一个对象
                                 dev_manage = res.data.extra[m];
                                 res.data.extra.splice(m, 1);   //删除当前元素
                                 m--;   //当前位置再遍历一次
-
-                                //console.log('[sidebar] dev_manage:', dev_manage);
 
                                 //新的device信息
                                 dev_cn_name = dev_manage['dev_cn_name'];
@@ -167,13 +190,20 @@
                                 };
                                 prjItem.subs.push(subitem);
 
-                                console.log('[sidebar] found, index:', m, res.data.extra.length);
+                                // console.log('[sidebar] found, index:', m, res.data.extra.length);
                             }
 
                             //整体加入数组
-                            self.items.push(prjItem);
+                              self.items.push(prjItem);
+                        
+                            // self.items[2].subs.push(prjItem);
                             //console.log('[sidebar] prjitem:', prjItem);
+                            // console.log(self.items[2].subs[0].subs[0])
+                        
+                            
+                            
                         }
+                        // console.log( self.items);
                     }
                 })
             },

@@ -3,8 +3,7 @@ import Router from 'vue-router';
 
 Vue.use(Router);
 
-export default new Router({
-    routes: [
+const routes = [
         {
             path: '/',
             redirect: '/login'
@@ -13,11 +12,11 @@ export default new Router({
             path: '/readme',
             component: resolve => require(['../components/common/Home.vue'], resolve),
             children:[
-                {
-                    path: '/',
-                    //name: '/',
-                    component: resolve => require(['../components/page/Readme.vue'], resolve)
-                },
+                // {
+                //     path: '/',
+                //     //name: '/',
+                //     component: resolve => require(['../components/page/Readme.vue'], resolve)
+                // },
                 {
                     path: '/basetable',
                     name: '/basetable',
@@ -92,5 +91,19 @@ export default new Router({
             name: '/charts',
             component: resolve => require(['../components/page/BaseCharts.vue'], resolve)
         },
+    
+        {
+            path: '*', // 页面不存在的情况下
+            redirect: '/',
+         
+          }
     ]
-})
+  
+const router = new Router({
+   mode: 'hash',
+   base:process.env.BASE_URL,
+   routes
+  })
+
+
+export default router
