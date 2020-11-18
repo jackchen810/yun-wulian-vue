@@ -1,12 +1,17 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-
+import Nindex from '../components/newpage/index.vue'
 Vue.use(Router);
 
 const routes = [
         {
             path: '/',
-            redirect: '/login'
+            redirect: '/index'
+        },
+        {
+            path: '/index',
+            name: 'Index',
+            component: Nindex
         },
         {
             path: '/readme',
@@ -94,7 +99,7 @@ const routes = [
     
         {
             path: '*', // 页面不存在的情况下
-            redirect: '/',
+            redirect: '/login',
          
           }
     ]
@@ -102,6 +107,7 @@ const routes = [
 const router = new Router({
    mode: 'hash',
    base:process.env.BASE_URL,
+
    routes
   })
 

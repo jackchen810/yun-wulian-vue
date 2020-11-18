@@ -24,6 +24,25 @@
                 <el-link type="primary" disabled>2018-2020 北京金大万翔环保科技有限公司 版权所有 </el-link>
             </div>
         </div>
+         <vue-particles
+        color="#fff"
+        :particleOpacity="0.7"
+        :particlesNumber="80"
+        shapeType="circle"
+        :particleSize="4"
+        linesColor="#fff"
+        :linesWidth="1"
+        :lineLinked="true"
+        :lineOpacity="0.4"
+        :linesDistance="150"
+        :moveSpeed="2"
+        :hoverEffect="true"
+        hoverMode="grab"
+        :clickEffect="true"
+        clickMode="push"
+        class="lizi"
+      >
+      </vue-particles>
     </div>
 </template>
 
@@ -31,6 +50,7 @@
     import axios from 'axios';
     import crypto from 'crypto'
     //import global_ from 'components/common/Global';
+    
     export default {
         data: function(){
             return {
@@ -59,6 +79,7 @@
             }
         },
         created:function(){
+            
         },
         methods: {
 
@@ -218,6 +239,7 @@
         text-align: center;
         font-size:30px;
         color: #fff;
+        z-index: 99;
 
     }
     .ms-login{
@@ -230,6 +252,7 @@
         padding:40px;
         border-radius: 5px;
         background: #fff;
+         z-index: 99;
     }
     .login-btn{
         text-align: center;
@@ -243,5 +266,5 @@
         text-align: center;
         color: #fff;
     }
-
+    
 </style>

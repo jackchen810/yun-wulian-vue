@@ -4,6 +4,7 @@ import router from './router';
 import axios from 'axios';
 import ElementUI from 'element-ui';
 //import 'element-ui/lib/theme-default/index.css';    // 默认主题
+
 import 'element-ui/lib/theme-chalk/index.css'
  //import '../static/css/theme-green/index.css';       // 浅绿色主题
 //import "babel-polyfill";
@@ -14,7 +15,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // Tell Vue to use the plugin
 //Vue.use(VueCookie);
+import VueParticles from 'vue-particles'  
 
+Vue.use(VueParticles) 
 Vue.use(ElementUI);
 axios.defaults.withCredentials=true;
 
